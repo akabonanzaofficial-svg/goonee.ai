@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizMentor AI — Platform Konsultan Bisnis Digital Berbasis AI</title>
+
+    <!-- ═══ BLOK: Tailwind Config ═══ -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe',
+                            300: '#93c5fd', 400: '#60a5fa', 500: '#3b82f6',
+                            600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af',
+                            900: '#1e3a8a',
+                        }
+                    },
+                    fontFamily: { sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+
+    <!-- ═══ BLOK: External Libraries ═══ -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <!-- ═══ BLOK: Custom Styles ═══ -->
+    <style>
+        [x-cloak] { display: none !important; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* Loading skeleton */
+        .skeleton {
+            background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+            background-size: 200% 100%;
+            animation: skeleton 1.5s ease-in-out infinite;
+        }
+        @keyframes skeleton {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Gantt bar */
+        .gantt-bar {
+            background: linear-gradient(90deg, #3b82f6, #10b981);
+            border-radius: 6px;
+            height: 28px;
+            position: relative;
+        }
+
+        /* Color swatch */
+        .swatch {
+            width: 48px; height: 48px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+        .swatch:hover { transform: scale(1.1); }
+
+        /* Print styles */
+        @media print {
+            aside, header, .no-print { display: none !important; }
+            main { padding: 0 !important; }
+            body { background: white !important; }
+        }
+    </style>
+</head>
+    <!-- ═══════════════════════════════════════════ -->
+    <!-- ═══ BLOK: MAIN APP LAYOUT ═══ -->
+    <!-- ═══════════════════════════════════════════ -->
+    <template x-if="currentView !== 'landing' && currentView !== 'onboarding'">
+        <div class="h-full flex overflow-hidden">
+
+            <!-- Sidebar Overlay Mobile -->
+            <div x-show="sidebarOpen" x-cloak @click="sidebarOpen = false"
+                 class="fixed inset-0 bg-slate-900/50 z-20 lg:hidden"></div>
+
+            <!-- Sidebar -->
+            <aside class="w-72 bg-slate-900 text-slate-300 flex flex-col z-30 transition-transform duration-300 fixed inset-y-0 left-0 lg:static"
+                   :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'">
+
+                <!-- Logo -->
+                <div class="h-20 flex items-center px-6 border-b border-slate-800 justify-between">
+                    <div class="flex items-center space-x-3 cursor-pointer" @click="goTo('dashboard')">
+                        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-500 to-emerald-500 flex items-center justify-center text-white shadow-md">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <span class="font-extrabold text-white text-base tracking-tight block">
+                                BizMentor <span class="text-brand-400">AI</span>
+                            </span>
+                            <span class="text-xs text-slate-400 truncate max-w-[130px] block"
+                                  x-text="formData.profile.businessName || 'Bisnis Baru'"></span>
+                        </div>
+                    </div>
+                    <button @click="sidebarOpen = false" class="lg:hidden text-slate-400 hover:text-white">
+                        <i class="fas fa-times text-lg"></i>
+                    </button>
+                </div>
+
+                <!-- Nav Menu -->
+                <nav class="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
+                    <template x-for="item in navItems" :key="item.id">
+                        <button @click="goTo(item.id); sidebarOpen = false"
+                                x-show="!item.conditional || item.conditional()"
+                                class="w-full flex items-center justify-between px-4 py-3 rounded-xl font-medium text-sm transition group"
+                                :class="currentView === item.id
+                                    ? 'bg-brand-600 text-white shadow-lg font-bold'
+                                    : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'">
+                            <div class="flex items-center space-x-3">
+                                <i :class="item.icon" class="text-base w-5 text-center"></i>
+                                <span x-text="item.label"></span>
+                            </div>
+                            <span class="w-2 h-2 rounded-full"
+                                  :class="{
+                                      'bg-emerald-400': item.status === 'completed',
+                                      'bg-amber-400': item.status === 'in-progress',
+                                      'bg-slate-600': item.status === 'not-started'
+                                  }"></span>
+                        </button>
+                    </template>
+                </nav>
+
+                <!-- User Profile Footer -->
+                <div class="p-4 border-t border-slate-800 flex items-center justify-between">
+                    <div class="flex items-center space-x-3 min-w-0">
+                        <div class="w-10 h-10 rounded-full bg-brand-700 flex items-center justify-center text-white font-bold text-sm shrink-0">
+                            <span x-text="formData.profile.businessName ? formData.profile.businessName.charAt(0).toUpperCase() : 'B'"></span>
+                        </div>
+                        <div class="min-w-0">
+                            <p class="text-sm font-bold text-white truncate"
+                               x-text="formData.profile.businessName || 'Bisnis Anda'"></p>
+                            <p class="text-xs text-slate-400 truncate"
+                               x-text="formData.profile.industry || 'Umum'"></p>
+                        </div>
+                    </div>
+                    <button @click="goTo('settings')" class="text-slate-400 hover:text-white p-2 shrink-0">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-slate-50">
+
+                <!-- Header -->
+                <header class="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-4 sm:px-6 z-20 shrink-0">
+                    <div class="flex items-center space-x-4 min-w-0">
+                        <button @click="sidebarOpen = !sidebarOpen" class="lg:hidden text-slate-600 hover:text-slate-900 text-xl">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                        <div class="min-w-0">
+                            <h1 class="text-lg sm:text-xl font-extrabold text-slate-900 truncate"
+                                x-text="getCurrentViewTitle()"></h1>
+                            <p class="text-xs text-slate-500 hidden sm:block">Platform Konsultan Bisnis Digital</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center space-x-3 sm:space-x-6">
+                        <!-- Progress -->
+                        <div class="hidden md:flex items-center space-x-3 bg-slate-100 px-4 py-2 rounded-xl">
+                            <span class="text-xs font-bold text-slate-600">Progress:</span>
+                            <div class="w-32 bg-slate-200 h-2.5 rounded-full overflow-hidden">
+                                <div class="bg-emerald-500 h-full rounded-full transition-all duration-500"
+                                     :style="`width: ${getGlobalProgress()}%`"></div>
+                            </div>
+                            <span class="text-xs font-extrabold text-slate-800"
+                                  x-text="getGlobalProgress() + '%'"></span>
+                        </div>
+
+                        <!-- AI Button -->
+                        <button @click="runAIGeneratorGlobal()"
+                                class="px-3 sm:px-4 py-2 bg-gradient-to-r from-brand-600 to-emerald-600 text-white rounded-xl text-xs sm:text-sm font-bold shadow-md hover:opacity-95 transition flex items-center">
+                            <i class="fas fa-wand-magic-sparkles sm:mr-2"></i>
+                            <span class="hidden sm:inline">Analisis AI</span>
+                        </button>
+                    </div>
+                </header>
+
+                <!-- Main Scrollable -->
+                <main class="flex-1 overflow-y-auto p-4 sm:p-8">
+                    <div class="max-w-6xl mx-auto">
+                                              <!-- ═══════════════════════════════════════════ -->
+                        <!-- ═══ BLOK: VIEW — REPORT & EXPORT ═══ -->
+                        <!-- ═══════════════════════════════════════════ -->
+                        <div x-show="currentView === 'report'" x-cloak class="space-y-6">
+
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-4 no-print">
+                                <div>
+                                    <span class="text-xs font-bold text-brand-600 uppercase">Export & Ringkasan</span>
+                                    <h2 class="text-2xl font-extrabold text-slate-900">Laporan Eksekutif Bisnis</h2>
+                                </div>
+                                <div class="flex flex-wrap gap-3">
+                                    <button @click="window.print()"
+                                            class="px-4 py-2.5 bg-slate-800 text-white rounded-xl text-sm font-bold hover:bg-slate-900 shadow-md">
+                                        <i class="fas fa-print mr-2"></i> Cetak / PDF
+                                    </button>
+                                    <button @click="exportJSON()"
+                                            class="px-4 py-2.5 bg-brand-600 text-white rounded-xl text-sm font-bold hover:bg-brand-700 shadow-md">
+                                        <i class="fas fa-download mr-2"></i> Export JSON
+                                    </button>
+                                    <button @click="generateExecutiveSummary()"
+                                            class="px-4 py-2.5 bg-gradient-to-r from-emerald-600 to-brand-600 text-white rounded-xl text-sm font-bold shadow-md">
+                                        <i class="fas fa-wand-magic-sparkles mr-2"></i> Resume AI
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Executive Summary Report -->
+                            <div class="bg-white p-6 sm:p-10 rounded-3xl border border-slate-200 shadow-sm space-y-8">
+
+                                <!-- Cover -->
+                                <div class="text-center border-b pb-8">
+                                    <div class="inline-flex items-center px-3 py-1 bg-brand-50 text-brand-700 rounded-full text-xs font-semibold mb-4">
+                                        <i class="fas fa-file-alt mr-2"></i> Laporan Eksekutif
+                                    </div>
+                                    <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-2"
+                                        x-text="formData.profile.businessName || 'Bisnis Tanpa Nama'"></h1>
+                                    <p class="text-slate-500">
+                                        Sektor: <span class="font-semibold text-slate-700" x-text="formData.profile.industry || '-'"></span>
+                                        |
+                                        Tipe: <span class="font-semibold text-slate-700"
+                                                    x-text="formData.profile.userType === 'new' ? 'Bisnis Baru' : 'Bisnis Berjalan'"></span>
+                                    </p>
+                                    <p class="text-xs text-slate-400 mt-3">
+                                        Dibuat: <span x-text="new Date().toLocaleDateString('id-ID', {year:'numeric', month:'long', day:'numeric'})"></span>
+                                    </p>
+                                </div>
+
+                                <!-- Executive Summary AI -->
+                                <div x-show="formData.report.summary" class="bg-gradient-to-br from-brand-50 to-emerald-50 rounded-2xl p-6 border border-brand-100">
+                                    <h2 class="text-lg font-bold text-brand-900 mb-3">
+                                        <i class="fas fa-robot mr-2"></i> Ringkasan Eksekutif (AI)
+                                    </h2>
+                                    <p class="text-sm text-slate-700 leading-relaxed whitespace-pre-line"
+                                       x-text="formData.report.summary"></p>
+                                </div>
+
+                                <!-- Section 1: Diagnosis -->
+                                <div class="space-y-3">
+                                    <h2 class="text-xl font-bold text-brand-600 border-b pb-2">
+                                        <i class="fas fa-stethoscope mr-2"></i> 1. Diagnosis & Analisis Pasar
+                                    </h2>
+                                    <div class="grid md:grid-cols-2 gap-4 text-sm">
+                                        <div class="bg-slate-50 p-4 rounded-xl">
+                                            <p class="font-bold text-slate-700 mb-1">PESTEL — Political/Economic</p>
+                                            <p class="text-slate-600" x-text="formData.diagnosis.pestel.political || 'Belum diisi'"></p>
+                                        </div>
+                                        <div class="bg-slate-50 p-4 rounded-xl">
+                                            <p class="font-bold text-slate-700 mb-1">PESTEL — Social/Cultural</p>
+                                            <p class="text-slate-600" x-text="formData.diagnosis.pestel.social || 'Belum diisi'"></p>
+                                        </div>
+                                        <div class="bg-slate-50 p-4 rounded-xl">
+                                            <p class="font-bold text-slate-700 mb-1">PESTEL — Technological</p>
+                                            <p class="text-slate-600" x-text="formData.diagnosis.pestel.tech || 'Belum diisi'"></p>
+                                        </div>
+                                        <div class="bg-slate-50 p-4 rounded-xl">
+                                            <p class="font-bold text-slate-700 mb-1">PESTEL — Legal</p>
+                                            <p class="text-slate-600" x-text="formData.diagnosis.pestel.legal || 'Belum diisi'"></p>
+                                        </div>
+                                    </div>
+                                    <div class="bg-slate-50 p-4 rounded-xl text-sm">
+                                        <p class="font-bold text-slate-700 mb-1">Celah Pasar & USP</p>
+                                        <p class="text-slate-600" x-text="formData.diagnosis.competitorGap || 'Belum diisi'"></p>
+                                    </div>
+                                </div>
+
+                                <!-- Section 2: Strategi -->
+                                <div class="space-y-3">
+                                    <h2 class="text-xl font-bold text-brand-600 border-b pb-2">
+                                        <i class="fas fa-chess mr-2"></i> 2. Strategi & Model Bisnis
+                                    </h2>
+                                    <div class="bg-slate-50 p-4 rounded-xl text-sm">
+                                        <p class="font-bold text-slate-700 mb-1">Positioning Statement</p>
+                                        <p class="text-slate-600 italic" x-text="formData.strategy.stp.statement || 'Belum diisi'"></p>
+                                    </div>
+                                    <div class="grid md:grid-cols-2 gap-4 text-sm">
+                                        <div class="bg-slate-50 p-4 rounded-xl">
+                                            <p class="font-bold text-slate-700 mb-1">Value Proposition</p>
+                                            <p class="text-slate-600" x-text="formData.strategy.bmc.value || 'Belum diisi'"></p>
+                                        </div>
+                                        <div class="bg-slate-50 p-4 rounded-xl">
+                                            <p class="font-bold text-slate-700 mb-1">Target Segment</p>
+                                            <p class="text-slate-600" x-text="formData.strategy.bmc.segments || 'Belum diisi'"></p>
+                                        </div>
+                                        <div class="bg-slate-50 p-4 rounded-xl">
+                                            <p class="font-bold text-slate-700 mb-1">Key Activities</p>
+                                            <p class="text-slate-600" x-text="formData.strategy.bmc.activities || 'Belum diisi'"></p>
+                                        </div>
+                                        <div class="bg-slate-50 p-4 rounded-xl">
+                                            <p class="font-bold text-slate-700 mb-1">Revenue Streams</p>
+                                            <p class="text-slate-600" x-text="formData.strategy.bmc.revenue || 'Belum diisi'"></p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Section 3: Branding -->
+                                <div class="space-y-3">
+                                    <h2 class="text-xl font-bold text-brand-600 border-b pb-2">
+                                        <i class="fas fa-palette mr-2"></i> 3. Brand Identity
+                                    </h2>
+                                    <div class="grid md:grid-cols-2 gap-4 text-sm">
+                                        <div class="bg-slate-50 p-4 rounded-xl">
+                                            <p class="font-bold text-slate-700 mb-1">Tagline</p>
+                                            <p class="text-slate-600 italic" x-text="formData.branding.tagline || 'Belum diisi'"></p>
+                                        </div>
+                                        <div class="bg-slate-50 p-4 rounded-xl">
+                                            <p class="font-bold text-slate-700 mb-1">Brand Voice & Personality</p>
+                                            <p class="text-slate-600" x-text="formData.branding.voice || 'Belum diisi'"></p>
+                                        </div>
+                                    </div>
+                                    <div class="bg-slate-50 p-4 rounded-xl text-sm">
+                                        <p class="font-bold text-slate-700 mb-2">Palet Warna</p>
+                                        <div class="flex gap-2">
+                                            <template x-for="(c, i) in formData.branding.colors" :key="i">
+                                                <div class="w-10 h-10 rounded-lg shadow-sm" :style="`background: ${c}`"></div>
+                                            </template>
+                                        </div>
+                                    </div>
+                                    <div class="bg-slate-50 p-4 rounded-xl text-sm">
+                                        <p class="font-bold text-slate-700 mb-1">Top 3 Rekomendasi Produk</p>
+                                        <ol class="list-decimal list-inside text-slate-600 space-y-1">
+                                            <template x-for="(p, i) in formData.branding.products" :key="i">
+                                                <li x-show="p.name">
+                                                    <span class="font-semibold" x-text="p.name"></span>
+                                                    <span class="text-xs text-emerald-600 ml-2" x-show="p.score"
+                                                          x-text="`(Skor: ${p.score}/10)`"></span>
+                                                </li>
+                                            </template>
+                                        </ol>
+                                    </div>
+                                </div>
+
+                                <!-- Section 4: Financial -->
+                                <div class="space-y-3">
+                                    <h2 class="text-xl font-bold text-brand-600 border-b pb-2">
+                                        <i class="fas fa-calculator mr-2"></i> 4. Perencanaan Finansial
+                                    </h2>
+                                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                                        <div class="bg-slate-50 p-4 rounded-xl">
+                                            <p class="text-xs font-bold text-slate-500 uppercase">CAC</p>
+                                            <p class="font-bold text-slate-800 text-lg" x-text="formData.financial.cac || '-'"></p>
+                                        </div>
+                                        <div class="bg-slate-50 p-4 rounded-xl">
+                                            <p class="text-xs font-bold text-slate-500 uppercase">LTV</p>
+                                            <p class="font-bold text-slate-800 text-lg" x-text="formData.financial.ltv || '-'"></p>
+                                        </div>
+                                        <div class="bg-slate-50 p-4 rounded-xl">
+                                            <p class="text-xs font-bold text-slate-500 uppercase">Margin</p>
+                                            <p class="font-bold text-slate-800 text-lg" x-text="formData.financial.margin || '-'"></p>
+                                        </div>
+                                        <div class="bg-slate-50 p-4 rounded-xl">
+                                            <p class="text-xs font-bold text-slate-500 uppercase">BEP</p>
+                                            <p class="font-bold text-slate-800 text-lg" x-text="formData.financial.bep || '-'"></p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Section 5: Roadmap -->
+                                <div class="space-y-3">
+                                    <h2 class="text-xl font-bold text-brand-600 border-b pb-2">
+                                        <i class="fas fa-rocket mr-2"></i> 5. Roadmap Eksekusi
+                                    </h2>
+                                    <div class="space-y-2 text-sm">
+                                        <template x-for="(item, i) in formData.execution.roadmap" :key="i">
+                                            <div x-show="item.title" class="flex items-center space-x-3 bg-slate-50 p-3 rounded-xl">
+                                                <span class="w-8 h-8 rounded-lg bg-brand-100 text-brand-700 flex items-center justify-center text-xs font-bold shrink-0"
+                                                      x-text="`Q${item.quarter || 1}`"></span>
+                                                <span class="text-slate-700" x-text="item.title"></span>
+                                            </div>
+                                        </template>
+                                    </div>
+                                </div>
+
+                                <!-- Footer -->
+                                <div class="text-center text-xs text-slate-400 pt-8 border-t">
+                                    <p>Laporan dibuat oleh BizMentor AI — Platform Konsultan Bisnis Digital</p>
+                                    <p>Gemini AI & Grok AI Engine</p>
+                                </div>
+                            </div>
+                        </div>
+                        
