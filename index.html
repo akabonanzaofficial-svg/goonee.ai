@@ -1,393 +1,2014 @@
 <!DOCTYPE html>
 <html lang="id" class="h-full">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BizMentor AI — Platform Konsultan Bisnis Digital Berbasis AI</title>
-
-    <!-- ═══ BLOK: Tailwind Config ═══ -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe',
-                            300: '#93c5fd', 400: '#60a5fa', 500: '#3b82f6',
-                            600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af',
-                            900: '#1e3a8a',
-                        }
-                    },
-                    fontFamily: { sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'] }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BizMentor AI — Platform Konsultan Bisnis Digital Berbasis AI</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+    darkMode: 'class',
+    theme: {
+        extend: {
+            colors: {
+                brand: {
+                    50: '#eff6ff', 100: '#dbeafe', 200: '#bfdbfe',
+                    300: '#93c5fd', 400: '#60a5fa', 500: '#3b82f6',
+                    600: '#2563eb', 700: '#1d4ed8', 800: '#1e40af',
+                    900: '#1e3a8a',
                 }
-            }
+            },
+            fontFamily: { sans: ['Plus Jakarta Sans', 'Inter', 'sans-serif'] }
         }
-    </script>
-
-    <!-- ═══ BLOK: External Libraries ═══ -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
-    <!-- ═══ BLOK: Custom Styles ═══ -->
-    <style>
-        [x-cloak] { display: none !important; }
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #f1f5f9; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-
-        /* Loading skeleton */
-        .skeleton {
-            background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
-            background-size: 200% 100%;
-            animation: skeleton 1.5s ease-in-out infinite;
-        }
-        @keyframes skeleton {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-
-        /* Gantt bar */
-        .gantt-bar {
-            background: linear-gradient(90deg, #3b82f6, #10b981);
-            border-radius: 6px;
-            height: 28px;
-            position: relative;
-        }
-
-        /* Color swatch */
-        .swatch {
-            width: 48px; height: 48px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
-            cursor: pointer;
-        }
-        .swatch:hover { transform: scale(1.1); }
-
-        /* Print styles */
-        @media print {
-            aside, header, .no-print { display: none !important; }
-            main { padding: 0 !important; }
-            body { background: white !important; }
-        }
-    </style>
+    }
+}
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<style>
+[x-cloak] { display: none !important; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #f1f5f9; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+.skeleton { background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%); background-size: 200% 100%; animation: skeleton 1.5s ease-in-out infinite; }
+@keyframes skeleton { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+.gantt-bar { background: linear-gradient(90deg, #3b82f6, #10b981); border-radius: 6px; height: 28px; position: relative; }
+.swatch { width: 48px; height: 48px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: transform 0.2s; cursor: pointer; }
+.swatch:hover { transform: scale(1.1); }
+@media print { aside, header, .no-print { display: none !important; } main { padding: 0 !important; } body { background: white !important; } }
+</style>
 </head>
-    <!-- ═══════════════════════════════════════════ -->
-    <!-- ═══ BLOK: MAIN APP LAYOUT ═══ -->
-    <!-- ═══════════════════════════════════════════ -->
-    <template x-if="currentView !== 'landing' && currentView !== 'onboarding'">
-        <div class="h-full flex overflow-hidden">
+<body class="h-full bg-slate-50 text-slate-800 font-sans antialiased flex flex-col" x-data="bizMentorApp()" x-init="init()" x-cloak>
 
-            <!-- Sidebar Overlay Mobile -->
-            <div x-show="sidebarOpen" x-cloak @click="sidebarOpen = false"
-                 class="fixed inset-0 bg-slate-900/50 z-20 lg:hidden"></div>
+<!-- TOAST -->
+<div aria-live="polite" class="fixed top-5 right-5 z-50 flex flex-col space-y-2 pointer-events-none">
+    <template x-for="toast in toasts" :key="toast.id">
+        <div class="pointer-events-auto flex items-center p-4 rounded-xl shadow-lg border text-sm font-medium"
+             :class="{
+                'bg-emerald-50 border-emerald-200 text-emerald-800': toast.type === 'success',
+                'bg-blue-50 border-blue-200 text-blue-800': toast.type === 'info',
+                'bg-amber-50 border-amber-200 text-amber-800': toast.type === 'warning',
+                'bg-rose-50 border-rose-200 text-rose-800': toast.type === 'error'
+             }">
+            <i class="mr-3 text-lg" :class="{
+                'fas fa-check-circle text-emerald-500': toast.type === 'success',
+                'fas fa-info-circle text-blue-500': toast.type === 'info',
+                'fas fa-exclamation-triangle text-amber-500': toast.type === 'warning',
+                'fas fa-times-circle text-rose-500': toast.type === 'error'
+             }"></i>
+            <span x-text="toast.message"></span>
+        </div>
+    </template>
+</div>
 
-            <!-- Sidebar -->
-            <aside class="w-72 bg-slate-900 text-slate-300 flex flex-col z-30 transition-transform duration-300 fixed inset-y-0 left-0 lg:static"
-                   :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'">
+<!-- AI LOADING OVERLAY -->
+<div x-show="aiLoading" x-cloak class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center">
+    <div class="bg-white rounded-3xl p-8 max-w-md w-full mx-4 text-center shadow-2xl">
+        <div class="w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-tr from-brand-600 to-emerald-500 flex items-center justify-center text-white">
+            <i class="fas fa-wand-magic-sparkles text-3xl animate-pulse"></i>
+        </div>
+        <h3 class="text-xl font-extrabold text-slate-900 mb-2">AI Sedang Menganalisis</h3>
+        <p class="text-sm text-slate-500 mb-6" x-text="aiLoadingMessage"></p>
+        <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+            <div class="bg-gradient-to-r from-brand-600 to-emerald-500 h-full rounded-full animate-pulse" style="width: 70%"></div>
+        </div>
+        <p class="text-xs text-slate-400 mt-4">
+            <i class="fas fa-robot mr-1"></i>
+            Provider: <span class="font-bold uppercase" x-text="settings.defaultProvider"></span>
+        </p>
+    </div>
+</div>
 
-                <!-- Logo -->
-                <div class="h-20 flex items-center px-6 border-b border-slate-800 justify-between">
-                    <div class="flex items-center space-x-3 cursor-pointer" @click="goTo('dashboard')">
-                        <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-500 to-emerald-500 flex items-center justify-center text-white shadow-md">
-                            <i class="fas fa-brain"></i>
-                        </div>
-                        <div class="min-w-0">
-                            <span class="font-extrabold text-white text-base tracking-tight block">
-                                BizMentor <span class="text-brand-400">AI</span>
-                            </span>
-                            <span class="text-xs text-slate-400 truncate max-w-[130px] block"
-                                  x-text="formData.profile.businessName || 'Bisnis Baru'"></span>
-                        </div>
+<!-- LANDING PAGE -->
+<template x-if="currentView === 'landing'">
+    <div class="min-h-full flex flex-col bg-white">
+        <header class="border-b border-slate-100 sticky top-0 bg-white/80 backdrop-blur-md z-40">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-emerald-500 flex items-center justify-center text-white shadow-md">
+                        <i class="fas fa-brain text-xl"></i>
                     </div>
-                    <button @click="sidebarOpen = false" class="lg:hidden text-slate-400 hover:text-white">
-                        <i class="fas fa-times text-lg"></i>
+                    <span class="text-xl font-extrabold tracking-tight text-slate-900">BizMentor <span class="text-brand-600">AI</span></span>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button @click="goTo('onboarding')" class="text-sm font-semibold text-slate-600 hover:text-brand-600 transition">Masuk / Setup</button>
+                    <button @click="goTo('onboarding')" class="px-5 py-2.5 rounded-xl bg-brand-600 text-white font-semibold shadow-lg hover:bg-brand-700 transition">
+                        Mulai Gratis <i class="fas fa-arrow-right ml-1"></i>
                     </button>
                 </div>
+            </div>
+        </header>
+        <section class="relative overflow-hidden pt-20 pb-24 lg:pt-32 lg:pb-36 bg-gradient-to-b from-slate-50 via-white to-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <div class="inline-flex items-center px-3.5 py-1.5 rounded-full bg-brand-50 border border-brand-100 text-brand-700 text-xs font-semibold mb-6">
+                    <i class="fas fa-sparkles mr-2 text-brand-500"></i> Didukung Gemini AI & Grok AI Engine
+                </div>
+                <h1 class="text-4xl sm:text-6xl font-extrabold text-slate-900 tracking-tight max-w-4xl mx-auto leading-tight">
+                    Konsultan Bisnis AI Pintar untuk <span class="bg-gradient-to-r from-brand-600 to-emerald-600 bg-clip-text text-transparent">UMKM & Calon Pengusaha</span>
+                </h1>
+                <p class="mt-6 text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto leading-relaxed">
+                    Panduan terstruktur dari diagnosis masalah, strategi bisnis, perumusan produk & branding, proyeksi keuangan, hingga roadmap eksekusi 12 bulan.
+                </p>
+                <div class="mt-10 flex flex-col sm:flex-row justify-center gap-4">
+                    <button @click="goTo('onboarding')" class="px-8 py-4 rounded-xl bg-brand-600 text-white font-bold shadow-xl hover:bg-brand-700 transition">
+                        Mulai Bangun Bisnis <i class="fas fa-rocket ml-2"></i>
+                    </button>
+                    <button @click="loadDemoData()" class="px-8 py-4 rounded-xl bg-white border border-slate-200 text-slate-700 font-bold shadow-sm hover:bg-slate-50 transition">
+                        <i class="fas fa-bolt text-amber-500 mr-2"></i> Muat Data Contoh
+                    </button>
+                </div>
+                <div class="grid md:grid-cols-3 gap-8 mt-24 text-left">
+                    <div class="bg-white p-8 rounded-2xl border border-slate-100 shadow-xl shadow-slate-100">
+                        <div class="w-12 h-12 rounded-xl bg-blue-50 text-brand-600 flex items-center justify-center text-xl mb-6"><i class="fas fa-stethoscope"></i></div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2">Diagnosis & Validasi</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">Analisis PESTEL, peta kompetitor, dan wawancara pelanggan berbasis Mom Test.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-2xl border border-slate-100 shadow-xl shadow-slate-100">
+                        <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl mb-6"><i class="fas fa-chess"></i></div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2">Strategi & BMC</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">STP, VPC, BMC 9 blok, SWOT, dan SOAR secara sistematis.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-2xl border border-slate-100 shadow-xl shadow-slate-100">
+                        <div class="w-12 h-12 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl mb-6"><i class="fas fa-chart-line"></i></div>
+                        <h3 class="text-xl font-bold text-slate-900 mb-2">Eksekusi & Keuangan</h3>
+                        <p class="text-slate-600 text-sm leading-relaxed">Unit economics, proyeksi P&L, risk register, dan roadmap 12 bulan.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <footer class="bg-slate-900 text-slate-400 py-12 mt-auto">
+            <div class="max-w-7xl mx-auto px-4 text-center text-sm">
+                <p>&copy; 2026 BizMentor AI. Dibangun untuk kemajuan UMKM Indonesia.</p>
+            </div>
+        </footer>
+    </div>
+</template>
 
-                <!-- Nav Menu -->
-                <nav class="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
-                    <template x-for="item in navItems" :key="item.id">
-                        <button @click="goTo(item.id); sidebarOpen = false"
-                                x-show="!item.conditional || item.conditional()"
-                                class="w-full flex items-center justify-between px-4 py-3 rounded-xl font-medium text-sm transition group"
-                                :class="currentView === item.id
-                                    ? 'bg-brand-600 text-white shadow-lg font-bold'
-                                    : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'">
-                            <div class="flex items-center space-x-3">
-                                <i :class="item.icon" class="text-base w-5 text-center"></i>
-                                <span x-text="item.label"></span>
-                            </div>
-                            <span class="w-2 h-2 rounded-full"
-                                  :class="{
-                                      'bg-emerald-400': item.status === 'completed',
-                                      'bg-amber-400': item.status === 'in-progress',
-                                      'bg-slate-600': item.status === 'not-started'
-                                  }"></span>
+<!-- ONBOARDING -->
+<template x-if="currentView === 'onboarding'">
+    <div class="min-h-full bg-slate-100 flex items-center justify-center p-4 sm:p-6 lg:p-8">
+        <div class="bg-white w-full max-w-2xl rounded-3xl shadow-2xl border border-slate-200 overflow-hidden p-8">
+            <div class="flex items-center justify-between mb-8">
+                <template x-for="step in [1,2,3,4]" :key="step">
+                    <div class="flex items-center flex-1">
+                        <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition"
+                             :class="onboardingStep >= step ? 'bg-brand-600 text-white shadow-lg' : 'bg-slate-100 text-slate-400'">
+                            <i class="fas fa-check" x-show="onboardingStep > step"></i>
+                            <span x-show="onboardingStep <= step" x-text="step"></span>
+                        </div>
+                        <div x-show="step < 4" class="flex-1 h-1 mx-2 rounded-full transition"
+                             :class="onboardingStep > step ? 'bg-brand-600' : 'bg-slate-200'"></div>
+                    </div>
+                </template>
+            </div>
+            <div class="mb-8 pb-4 border-b border-slate-100">
+                <span class="text-xs font-bold uppercase tracking-wider text-brand-600">Onboarding</span>
+                <h2 class="text-2xl font-extrabold text-slate-900"
+                    x-text="{1:'Pilih Status Bisnis',2:'Pilih Industri',3:'Konfigurasi AI Engine',4:'Konfirmasi & Mulai'}[onboardingStep]"></h2>
+            </div>
+
+            <!-- Step 1 -->
+            <div x-show="onboardingStep === 1" class="space-y-6">
+                <p class="text-slate-600">Di mana posisi bisnis Anda saat ini?</p>
+                <div class="grid sm:grid-cols-2 gap-4">
+                    <label class="border-2 rounded-2xl p-6 flex flex-col cursor-pointer transition hover:border-brand-500"
+                           :class="formData.profile.userType === 'new' ? 'border-brand-600 bg-brand-50/50' : 'border-slate-200'">
+                        <input type="radio" name="userType" value="new" x-model="formData.profile.userType" class="hidden">
+                        <i class="fas fa-seedling text-3xl text-brand-600 mb-4"></i>
+                        <span class="font-bold text-slate-900 text-lg mb-1">Saya baru mau mulai</span>
+                        <span class="text-slate-500 text-sm">Punya ide, ingin divalidasi dan dibangun dari nol.</span>
+                    </label>
+                    <label class="border-2 rounded-2xl p-6 flex flex-col cursor-pointer transition hover:border-brand-500"
+                           :class="formData.profile.userType === 'existing' ? 'border-brand-600 bg-brand-50/50' : 'border-slate-200'">
+                        <input type="radio" name="userType" value="existing" x-model="formData.profile.userType" class="hidden">
+                        <i class="fas fa-store text-3xl text-emerald-600 mb-4"></i>
+                        <span class="font-bold text-slate-900 text-lg mb-1">Bisnis sudah jalan</span>
+                        <span class="text-slate-500 text-sm">UMKM berjalan, ingin scale-up atau perbaiki profit.</span>
+                    </label>
+                </div>
+                <div class="flex justify-end pt-4">
+                    <button @click="nextOnboarding(1, formData.profile.userType, 'Pilih salah satu tipe user!')"
+                            class="px-6 py-3 bg-brand-600 text-white font-bold rounded-xl shadow-lg hover:bg-brand-700 transition">
+                        Selanjutnya <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div x-show="onboardingStep === 2" class="space-y-6">
+                <p class="text-slate-600">Pilih sektor industri & beri nama bisnis Anda:</p>
+                <div class="grid sm:grid-cols-2 gap-3 max-h-64 overflow-y-auto pr-1">
+                    <template x-for="ind in industries" :key="ind">
+                        <button type="button" @click="formData.profile.industry = ind"
+                                class="p-4 rounded-xl border text-left transition font-semibold text-sm flex items-center justify-between"
+                                :class="formData.profile.industry === ind ? 'border-brand-600 bg-brand-50 text-brand-700' : 'border-slate-200 text-slate-700 hover:bg-slate-50'">
+                            <span x-text="ind"></span>
+                            <i class="fas fa-check text-brand-600" x-show="formData.profile.industry === ind"></i>
                         </button>
                     </template>
-                </nav>
-
-                <!-- User Profile Footer -->
-                <div class="p-4 border-t border-slate-800 flex items-center justify-between">
-                    <div class="flex items-center space-x-3 min-w-0">
-                        <div class="w-10 h-10 rounded-full bg-brand-700 flex items-center justify-center text-white font-bold text-sm shrink-0">
-                            <span x-text="formData.profile.businessName ? formData.profile.businessName.charAt(0).toUpperCase() : 'B'"></span>
-                        </div>
-                        <div class="min-w-0">
-                            <p class="text-sm font-bold text-white truncate"
-                               x-text="formData.profile.businessName || 'Bisnis Anda'"></p>
-                            <p class="text-xs text-slate-400 truncate"
-                               x-text="formData.profile.industry || 'Umum'"></p>
-                        </div>
-                    </div>
-                    <button @click="goTo('settings')" class="text-slate-400 hover:text-white p-2 shrink-0">
-                        <i class="fas fa-cog"></i>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-1">Nama Bisnis / Ide Bisnis</label>
+                    <input type="text" x-model="formData.profile.businessName" placeholder="Contoh: Kopi Senja Nusantara"
+                           class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                </div>
+                <div class="flex justify-between pt-4">
+                    <button @click="onboardingStep--" class="px-6 py-3 bg-slate-200 text-slate-700 font-bold rounded-xl hover:bg-slate-300 transition">Kembali</button>
+                    <button @click="nextOnboarding(2, formData.profile.industry && formData.profile.businessName, 'Lengkapi industri dan nama bisnis!')"
+                            class="px-6 py-3 bg-brand-600 text-white font-bold rounded-xl shadow-lg hover:bg-brand-700 transition">
+                        Selanjutnya <i class="fas fa-arrow-right ml-2"></i>
                     </button>
                 </div>
-            </aside>
+            </div>
 
-            <!-- Main Content -->
-            <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-slate-50">
-
-                <!-- Header -->
-                <header class="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-4 sm:px-6 z-20 shrink-0">
-                    <div class="flex items-center space-x-4 min-w-0">
-                        <button @click="sidebarOpen = !sidebarOpen" class="lg:hidden text-slate-600 hover:text-slate-900 text-xl">
-                            <i class="fas fa-bars"></i>
+            <!-- Step 3 -->
+            <div x-show="onboardingStep === 3" class="space-y-6">
+                <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 text-xs text-amber-800 leading-relaxed">
+                    <i class="fas fa-shield-alt text-amber-600 mr-1"></i>
+                    <strong>Opsional:</strong> Masukkan API Key untuk analisis AI cerdas. Jika dilewati, aplikasi berjalan dalam <strong>mode demo</strong>.
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-1">Gemini API Key <span class="text-slate-400 font-normal">(opsional)</span></label>
+                    <div class="relative">
+                        <input :type="showGeminiKey ? 'text' : 'password'" x-model="settings.geminiKey"
+                               class="w-full pl-4 pr-12 py-3 rounded-xl border border-slate-300 font-mono text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none" placeholder="AIzaSy...">
+                        <button type="button" @click="showGeminiKey = !showGeminiKey" class="absolute right-3 top-3.5 text-slate-400 hover:text-slate-600">
+                            <i class="fas" :class="showGeminiKey ? 'fa-eye-slash' : 'fa-eye'"></i>
                         </button>
-                        <div class="min-w-0">
-                            <h1 class="text-lg sm:text-xl font-extrabold text-slate-900 truncate"
-                                x-text="getCurrentViewTitle()"></h1>
-                            <p class="text-xs text-slate-500 hidden sm:block">Platform Konsultan Bisnis Digital</p>
-                        </div>
                     </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-1">Grok API Key <span class="text-slate-400 font-normal">(opsional)</span></label>
+                    <div class="relative">
+                        <input :type="showGrokKey ? 'text' : 'password'" x-model="settings.grokKey"
+                               class="w-full pl-4 pr-12 py-3 rounded-xl border border-slate-300 font-mono text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none" placeholder="xai-...">
+                        <button type="button" @click="showGrokKey = !showGrokKey" class="absolute right-3 top-3.5 text-slate-400 hover:text-slate-600">
+                            <i class="fas" :class="showGrokKey ? 'fa-eye-slash' : 'fa-eye'"></i>
+                        </button>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-1">Default AI Provider</label>
+                    <select x-model="settings.defaultProvider" class="w-full p-3 border rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                        <option value="gemini">Google Gemini AI</option>
+                        <option value="grok">xAI Grok</option>
+                    </select>
+                </div>
+                <div class="flex justify-between pt-4">
+                    <button @click="onboardingStep--" class="px-6 py-3 bg-slate-200 text-slate-700 font-bold rounded-xl hover:bg-slate-300 transition">Kembali</button>
+                    <button @click="onboardingStep++" class="px-6 py-3 bg-brand-600 text-white font-bold rounded-xl shadow-lg hover:bg-brand-700 transition">Selanjutnya <i class="fas fa-arrow-right ml-2"></i></button>
+                </div>
+            </div>
 
-                    <div class="flex items-center space-x-3 sm:space-x-6">
-                        <!-- Progress -->
-                        <div class="hidden md:flex items-center space-x-3 bg-slate-100 px-4 py-2 rounded-xl">
-                            <span class="text-xs font-bold text-slate-600">Progress:</span>
-                            <div class="w-32 bg-slate-200 h-2.5 rounded-full overflow-hidden">
-                                <div class="bg-emerald-500 h-full rounded-full transition-all duration-500"
-                                     :style="`width: ${getGlobalProgress()}%`"></div>
+            <!-- Step 4 -->
+            <div x-show="onboardingStep === 4" class="space-y-6 text-center py-6">
+                <div class="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-4xl mx-auto shadow-inner">
+                    <i class="fas fa-check"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-slate-900">Semua Siap, <span x-text="formData.profile.businessName"></span>!</h3>
+                <p class="text-slate-600 max-w-md mx-auto">Profil bisnis Anda telah dikonfigurasi.</p>
+                <div class="flex justify-center gap-3 pt-4">
+                    <button @click="onboardingStep--" class="px-6 py-3 bg-slate-200 text-slate-700 font-bold rounded-xl hover:bg-slate-300 transition">Kembali</button>
+                    <button @click="finishOnboarding()" class="px-8 py-4 bg-gradient-to-r from-brand-600 to-emerald-600 text-white font-extrabold rounded-2xl shadow-xl hover:opacity-95 transition">
+                        Masuk ke Dashboard <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<!-- MAIN APP LAYOUT -->
+<template x-if="currentView !== 'landing' && currentView !== 'onboarding'">
+    <div class="h-full flex overflow-hidden">
+        <div x-show="sidebarOpen" x-cloak @click="sidebarOpen = false" class="fixed inset-0 bg-slate-900/50 z-20 lg:hidden"></div>
+        <aside class="w-72 bg-slate-900 text-slate-300 flex flex-col z-30 transition-transform duration-300 fixed inset-y-0 left-0 lg:static"
+               :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'">
+            <div class="h-20 flex items-center px-6 border-b border-slate-800 justify-between">
+                <div class="flex items-center space-x-3 cursor-pointer" @click="goTo('dashboard')">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-500 to-emerald-500 flex items-center justify-center text-white shadow-md">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <div class="min-w-0">
+                        <span class="font-extrabold text-white text-base tracking-tight block">BizMentor <span class="text-brand-400">AI</span></span>
+                        <span class="text-xs text-slate-400 truncate max-w-[130px] block" x-text="formData.profile.businessName || 'Bisnis Baru'"></span>
+                    </div>
+                </div>
+                <button @click="sidebarOpen = false" class="lg:hidden text-slate-400 hover:text-white"><i class="fas fa-times text-lg"></i></button>
+            </div>
+            <nav class="flex-1 px-4 py-6 space-y-1.5 overflow-y-auto">
+                <template x-for="item in navItems" :key="item.id">
+                    <button @click="goTo(item.id); sidebarOpen = false"
+                            class="w-full flex items-center justify-between px-4 py-3 rounded-xl font-medium text-sm transition"
+                            :class="currentView === item.id ? 'bg-brand-600 text-white shadow-lg font-bold' : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'">
+                        <div class="flex items-center space-x-3">
+                            <i :class="item.icon" class="text-base w-5 text-center"></i>
+                            <span x-text="item.label"></span>
+                        </div>
+                        <span class="w-2 h-2 rounded-full"
+                              :class="{
+                                  'bg-emerald-400': item.status === 'completed',
+                                  'bg-amber-400': item.status === 'in-progress',
+                                  'bg-slate-600': item.status === 'not-started'
+                              }"></span>
+                    </button>
+                </template>
+            </nav>
+            <div class="p-4 border-t border-slate-800 flex items-center justify-between">
+                <div class="flex items-center space-x-3 min-w-0">
+                    <div class="w-10 h-10 rounded-full bg-brand-700 flex items-center justify-center text-white font-bold text-sm shrink-0">
+                        <span x-text="formData.profile.businessName ? formData.profile.businessName.charAt(0).toUpperCase() : 'B'"></span>
+                    </div>
+                    <div class="min-w-0">
+                        <p class="text-sm font-bold text-white truncate" x-text="formData.profile.businessName || 'Bisnis Anda'"></p>
+                        <p class="text-xs text-slate-400 truncate" x-text="formData.profile.industry || 'Umum'"></p>
+                    </div>
+                </div>
+                <button @click="goTo('settings')" class="text-slate-400 hover:text-white p-2 shrink-0"><i class="fas fa-cog"></i></button>
+            </div>
+        </aside>
+
+        <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-slate-50">
+            <header class="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-4 sm:px-6 z-20 shrink-0">
+                <div class="flex items-center space-x-4 min-w-0">
+                    <button @click="sidebarOpen = !sidebarOpen" class="lg:hidden text-slate-600 hover:text-slate-900 text-xl"><i class="fas fa-bars"></i></button>
+                    <div class="min-w-0">
+                        <h1 class="text-lg sm:text-xl font-extrabold text-slate-900 truncate" x-text="getCurrentViewTitle()"></h1>
+                        <p class="text-xs text-slate-500 hidden sm:block">Platform Konsultan Bisnis Digital</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-3 sm:space-x-6">
+                    <div class="hidden md:flex items-center space-x-3 bg-slate-100 px-4 py-2 rounded-xl">
+                        <span class="text-xs font-bold text-slate-600">Progress:</span>
+                        <div class="w-32 bg-slate-200 h-2.5 rounded-full overflow-hidden">
+                            <div class="bg-emerald-500 h-full rounded-full transition-all duration-500" :style="`width: ${getGlobalProgress()}%`"></div>
+                        </div>
+                        <span class="text-xs font-extrabold text-slate-800" x-text="getGlobalProgress() + '%'"></span>
+                    </div>
+                    <button @click="runAIGeneratorGlobal()" class="px-3 sm:px-4 py-2 bg-gradient-to-r from-brand-600 to-emerald-600 text-white rounded-xl text-xs sm:text-sm font-bold shadow-md hover:opacity-95 transition flex items-center">
+                        <i class="fas fa-wand-magic-sparkles sm:mr-2"></i>
+                        <span class="hidden sm:inline">Analisis AI</span>
+                    </button>
+                </div>
+            </header>
+
+            <main class="flex-1 overflow-y-auto p-4 sm:p-8">
+                <div class="max-w-6xl mx-auto">
+
+                    <!-- DASHBOARD -->
+                    <div x-show="currentView === 'dashboard'" class="space-y-8">
+                        <div class="bg-gradient-to-r from-brand-600 to-brand-800 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
+                            <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+                                <div class="max-w-xl">
+                                    <span class="px-3 py-1 bg-white/20 rounded-full text-xs font-semibold backdrop-blur-md">Dashboard Utama</span>
+                                    <h2 class="text-2xl sm:text-3xl font-extrabold mt-3 mb-2" x-text="`Selamat Datang, ${formData.profile.businessName || 'Pengusaha'}!`"></h2>
+                                    <p class="text-blue-100 text-sm leading-relaxed mb-6">AI siap memandu Anda menyusun strategi lengkap dari diagnosis hingga eksekusi.</p>
+                                    <button @click="goTo(getNextRecommendedPhase())" class="px-6 py-3 bg-white text-brand-700 font-bold rounded-xl shadow-lg hover:bg-brand-50 transition">
+                                        Lanjutkan: <span x-text="getPhaseLabel(getNextRecommendedPhase())"></span> <i class="fas fa-arrow-right ml-2"></i>
+                                    </button>
+                                </div>
+                                <div class="text-center">
+                                    <div class="w-32 h-32 rounded-full bg-white/10 border-4 border-white/20 flex flex-col items-center justify-center backdrop-blur-md">
+                                        <span class="text-3xl font-extrabold" x-text="getGlobalProgress() + '%'"></span>
+                                        <span class="text-xs uppercase tracking-wider text-blue-200 mt-1">Selesai</span>
+                                    </div>
+                                </div>
                             </div>
-                            <span class="text-xs font-extrabold text-slate-800"
-                                  x-text="getGlobalProgress() + '%'"></span>
                         </div>
 
-                        <!-- AI Button -->
-                        <button @click="runAIGeneratorGlobal()"
-                                class="px-3 sm:px-4 py-2 bg-gradient-to-r from-brand-600 to-emerald-600 text-white rounded-xl text-xs sm:text-sm font-bold shadow-md hover:opacity-95 transition flex items-center">
-                            <i class="fas fa-wand-magic-sparkles sm:mr-2"></i>
-                            <span class="hidden sm:inline">Analisis AI</span>
-                        </button>
+                        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+                            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-3">
+                                <div class="w-11 h-11 rounded-xl bg-blue-50 text-brand-600 flex items-center justify-center text-lg shrink-0"><i class="fas fa-industry"></i></div>
+                                <div class="min-w-0">
+                                    <p class="text-xs font-bold text-slate-400 uppercase">Industri</p>
+                                    <p class="text-sm font-bold text-slate-900 truncate" x-text="formData.profile.industry || '-'"></p>
+                                </div>
+                            </div>
+                            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-3">
+                                <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg shrink-0"><i class="fas fa-flag"></i></div>
+                                <div class="min-w-0">
+                                    <p class="text-xs font-bold text-slate-400 uppercase">Tipe</p>
+                                    <p class="text-sm font-bold text-slate-900 truncate" x-text="formData.profile.userType === 'new' ? 'Bisnis Baru' : 'Bisnis Berjalan'"></p>
+                                </div>
+                            </div>
+                            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-3">
+                                <div class="w-11 h-11 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center text-lg shrink-0"><i class="fas fa-robot"></i></div>
+                                <div class="min-w-0">
+                                    <p class="text-xs font-bold text-slate-400 uppercase">AI Engine</p>
+                                    <p class="text-sm font-bold text-slate-900 uppercase truncate" x-text="(settings.geminiKey || settings.grokKey) ? settings.defaultProvider : 'Mock'"></p>
+                                </div>
+                            </div>
+                            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-3">
+                                <div class="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-lg shrink-0"><i class="fas fa-tasks"></i></div>
+                                <div class="min-w-0">
+                                    <p class="text-xs font-bold text-slate-400 uppercase">Fase Aktif</p>
+                                    <p class="text-sm font-bold text-slate-900 truncate" x-text="getPhaseLabel(getNextRecommendedPhase())"></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm">
+                            <h3 class="text-xl font-extrabold text-slate-900 mb-6">Peta Jalan 5 Fase BizMentor</h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+                                <template x-for="(phase, index) in phasesList" :key="phase.id">
+                                    <div @click="goTo(phase.route)" class="border rounded-2xl p-5 cursor-pointer transition hover:shadow-lg flex flex-col justify-between"
+                                         :class="phase.completed ? 'border-emerald-200 bg-emerald-50/30' : 'border-slate-200 hover:border-brand-500'">
+                                        <div>
+                                            <span class="text-xs font-bold px-2.5 py-1 rounded-full"
+                                                  :class="phase.completed ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-700'"
+                                                  x-text="`Fase ${index + 1}`"></span>
+                                            <h4 class="font-bold text-slate-900 mt-3 mb-1" x-text="phase.title"></h4>
+                                            <p class="text-xs text-slate-500" x-text="phase.desc"></p>
+                                        </div>
+                                        <div class="mt-6 flex items-center justify-between text-xs font-bold">
+                                            <span :class="phase.completed ? 'text-emerald-600' : 'text-slate-400'" x-text="phase.completed ? 'Selesai' : 'Buka Tool'"></span>
+                                            <i class="fas fa-arrow-right" :class="phase.completed ? 'text-emerald-600' : 'text-slate-400'"></i>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm">
+                            <h3 class="text-xl font-extrabold text-slate-900 mb-4">Aktivitas Terakhir</h3>
+                            <div class="space-y-3">
+                                <template x-if="getRecentActivity().length === 0">
+                                    <p class="text-sm text-slate-400 italic py-4">Belum ada aktivitas. Mulai dari Diagnosis.</p>
+                                </template>
+                                <template x-for="act in getRecentActivity()" :key="act.label">
+                                    <div class="flex items-center space-x-3 py-2 border-b border-slate-100 last:border-0">
+                                        <div class="w-8 h-8 rounded-lg bg-brand-50 text-brand-600 flex items-center justify-center text-xs shrink-0">
+                                            <i :class="act.icon"></i>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm text-slate-700 truncate" x-text="act.label"></p>
+                                            <p class="text-xs text-slate-400" x-text="act.time"></p>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
                     </div>
-                </header>
 
-                <!-- Main Scrollable -->
-                <main class="flex-1 overflow-y-auto p-4 sm:p-8">
-                    <div class="max-w-6xl mx-auto">
-                                              <!-- ═══════════════════════════════════════════ -->
-                        <!-- ═══ BLOK: VIEW — REPORT & EXPORT ═══ -->
-                        <!-- ═══════════════════════════════════════════ -->
-                        <div x-show="currentView === 'report'" x-cloak class="space-y-6">
+                    <!-- DIAGNOSIS -->
+                    <div x-show="currentView === 'diagnosis'" class="space-y-6" x-data="{ tab: 'pestel' }">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-4">
+                            <div>
+                                <span class="text-xs font-bold text-brand-600 uppercase">Fase 1</span>
+                                <h2 class="text-2xl font-extrabold text-slate-900">Diagnosis & Validasi Pasar</h2>
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                <button @click="tab = 'pestel'" class="px-3 py-2 rounded-xl text-xs sm:text-sm font-bold transition" :class="tab === 'pestel' ? 'bg-brand-600 text-white' : 'bg-white text-slate-600 border'">PESTEL</button>
+                                <button @click="tab = 'competitor'" class="px-3 py-2 rounded-xl text-xs sm:text-sm font-bold transition" :class="tab === 'competitor' ? 'bg-brand-600 text-white' : 'bg-white text-slate-600 border'">Kompetitor</button>
+                                <button @click="tab = 'empathy'" class="px-3 py-2 rounded-xl text-xs sm:text-sm font-bold transition" :class="tab === 'empathy' ? 'bg-brand-600 text-white' : 'bg-white text-slate-600 border'">Empathy Map</button>
+                            </div>
+                        </div>
 
-                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-4 no-print">
+                        <div x-show="tab === 'pestel'" class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+                            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
                                 <div>
-                                    <span class="text-xs font-bold text-brand-600 uppercase">Export & Ringkasan</span>
-                                    <h2 class="text-2xl font-extrabold text-slate-900">Laporan Eksekutif Bisnis</h2>
+                                    <h3 class="text-lg font-bold text-slate-900">Analisis Makro PESTEL</h3>
+                                    <p class="text-xs text-slate-500">Evaluasi faktor eksternal industri <span x-text="formData.profile.industry"></span>.</p>
                                 </div>
-                                <div class="flex flex-wrap gap-3">
-                                    <button @click="window.print()"
-                                            class="px-4 py-2.5 bg-slate-800 text-white rounded-xl text-sm font-bold hover:bg-slate-900 shadow-md">
-                                        <i class="fas fa-print mr-2"></i> Cetak / PDF
-                                    </button>
-                                    <button @click="exportJSON()"
-                                            class="px-4 py-2.5 bg-brand-600 text-white rounded-xl text-sm font-bold hover:bg-brand-700 shadow-md">
-                                        <i class="fas fa-download mr-2"></i> Export JSON
-                                    </button>
-                                    <button @click="generateExecutiveSummary()"
-                                            class="px-4 py-2.5 bg-gradient-to-r from-emerald-600 to-brand-600 text-white rounded-xl text-sm font-bold shadow-md">
-                                        <i class="fas fa-wand-magic-sparkles mr-2"></i> Resume AI
-                                    </button>
+                                <button @click="generateAIContent('pestel')" class="px-4 py-2.5 bg-brand-600 text-white rounded-xl text-sm font-bold shadow-md flex items-center justify-center">
+                                    <i class="fas fa-wand-magic-sparkles mr-2"></i> Generate AI
+                                </button>
+                            </div>
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-bold text-slate-700 mb-1"><i class="fas fa-landmark text-brand-500 mr-1"></i> Political & Economic</label>
+                                    <textarea rows="3" x-model="formData.diagnosis.pestel.political" class="w-full p-4 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none" placeholder="Kebijakan pajak, inflasi, daya beli..."></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-bold text-slate-700 mb-1"><i class="fas fa-users text-brand-500 mr-1"></i> Social & Cultural</label>
+                                    <textarea rows="3" x-model="formData.diagnosis.pestel.social" class="w-full p-4 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none" placeholder="Tren gaya hidup, demografi..."></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-bold text-slate-700 mb-1"><i class="fas fa-microchip text-brand-500 mr-1"></i> Technological</label>
+                                    <textarea rows="3" x-model="formData.diagnosis.pestel.tech" class="w-full p-4 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none" placeholder="Adopsi digital, otomasi..."></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-bold text-slate-700 mb-1"><i class="fas fa-leaf text-brand-500 mr-1"></i> Environmental</label>
+                                    <textarea rows="3" x-model="formData.diagnosis.pestel.environment" class="w-full p-4 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none" placeholder="Tren ramah lingkungan..."></textarea>
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label class="block text-sm font-bold text-slate-700 mb-1"><i class="fas fa-gavel text-brand-500 mr-1"></i> Legal</label>
+                                    <textarea rows="2" x-model="formData.diagnosis.pestel.legal" class="w-full p-4 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none" placeholder="Perizinan, SNI, BPOM, halal..."></textarea>
+                                </div>
+                            </div>
+                            <div class="flex justify-end">
+                                <button @click="saveData(); showToast('Data PESTEL disimpan!', 'success')" class="px-6 py-3 bg-emerald-600 text-white font-bold rounded-xl shadow-lg hover:bg-emerald-700 transition">
+                                    <i class="fas fa-save mr-2"></i> Simpan
+                                </button>
+                            </div>
+                        </div>
+
+                        <div x-show="tab === 'competitor'" class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+                            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+                                <div>
+                                    <h3 class="text-lg font-bold text-slate-900">Pemetaan Kompetitor</h3>
+                                    <p class="text-xs text-slate-500">Identifikasi posisi kompetitor & celah pasar.</p>
+                                </div>
+                                <button @click="generateAIContent('competitor')" class="px-4 py-2.5 bg-brand-600 text-white rounded-xl text-sm font-bold shadow-md flex items-center justify-center">
+                                    <i class="fas fa-wand-magic-sparkles mr-2"></i> Generate AI
+                                </button>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm border rounded-xl overflow-hidden">
+                                    <thead class="bg-slate-50">
+                                        <tr>
+                                            <th class="text-left p-3 font-bold text-slate-700">Nama</th>
+                                            <th class="text-left p-3 font-bold text-slate-700">Harga</th>
+                                            <th class="text-left p-3 font-bold text-slate-700">Kekuatan</th>
+                                            <th class="text-left p-3 font-bold text-slate-700">Kelemahan</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <template x-for="(c, i) in formData.diagnosis.competitors" :key="i">
+                                            <tr class="border-t">
+                                                <td class="p-2"><input type="text" x-model="c.name" class="w-full p-2 border rounded-lg text-sm" placeholder="Nama"></td>
+                                                <td class="p-2"><input type="text" x-model="c.price" class="w-full p-2 border rounded-lg text-sm" placeholder="Rp..."></td>
+                                                <td class="p-2"><input type="text" x-model="c.strength" class="w-full p-2 border rounded-lg text-sm" placeholder="Kekuatan"></td>
+                                                <td class="p-2"><input type="text" x-model="c.weakness" class="w-full p-2 border rounded-lg text-sm" placeholder="Kelemahan"></td>
+                                            </tr>
+                                        </template>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <button @click="addCompetitor()" class="text-sm font-bold text-brand-600 hover:text-brand-700"><i class="fas fa-plus mr-1"></i> Tambah Kompetitor</button>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-1">Celah Pasar & USP Anda</label>
+                                <textarea rows="3" x-model="formData.diagnosis.competitorGap" class="w-full p-4 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none" placeholder="Peluang yang belum digarap kompetitor..."></textarea>
+                            </div>
+                            <div class="flex justify-end">
+                                <button @click="saveData(); showToast('Data kompetitor disimpan!', 'success')" class="px-6 py-3 bg-emerald-600 text-white font-bold rounded-xl shadow-lg">Simpan</button>
+                            </div>
+                        </div>
+
+                        <div x-show="tab === 'empathy'" class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+                            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+                                <div>
+                                    <h3 class="text-lg font-bold text-slate-900">Empathy Map & Mom Test</h3>
+                                    <p class="text-xs text-slate-500">Pahami pelanggan dari 4 perspektif + validasi perilaku.</p>
+                                </div>
+                                <button @click="generateAIContent('empathy')" class="px-4 py-2.5 bg-brand-600 text-white rounded-xl text-sm font-bold shadow-md flex items-center justify-center">
+                                    <i class="fas fa-wand-magic-sparkles mr-2"></i> Generate AI
+                                </button>
+                            </div>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div class="bg-blue-50 p-5 rounded-2xl border border-blue-100">
+                                    <label class="block text-sm font-bold text-blue-900 mb-2"><i class="fas fa-comment mr-1"></i> Says</label>
+                                    <textarea rows="3" x-model="formData.diagnosis.empathy.says" class="w-full p-3 rounded-xl border border-blue-200 text-sm bg-white"></textarea>
+                                </div>
+                                <div class="bg-purple-50 p-5 rounded-2xl border border-purple-100">
+                                    <label class="block text-sm font-bold text-purple-900 mb-2"><i class="fas fa-brain mr-1"></i> Thinks</label>
+                                    <textarea rows="3" x-model="formData.diagnosis.empathy.thinks" class="w-full p-3 rounded-xl border border-purple-200 text-sm bg-white"></textarea>
+                                </div>
+                                <div class="bg-emerald-50 p-5 rounded-2xl border border-emerald-100">
+                                    <label class="block text-sm font-bold text-emerald-900 mb-2"><i class="fas fa-running mr-1"></i> Does</label>
+                                    <textarea rows="3" x-model="formData.diagnosis.empathy.does" class="w-full p-3 rounded-xl border border-emerald-200 text-sm bg-white"></textarea>
+                                </div>
+                                <div class="bg-rose-50 p-5 rounded-2xl border border-rose-100">
+                                    <label class="block text-sm font-bold text-rose-900 mb-2"><i class="fas fa-heart mr-1"></i> Feels</label>
+                                    <textarea rows="3" x-model="formData.diagnosis.empathy.feels" class="w-full p-3 rounded-xl border border-rose-200 text-sm bg-white"></textarea>
+                                </div>
+                            </div>
+                            <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 text-xs text-amber-800">
+                                <i class="fas fa-lightbulb text-amber-600 mr-1"></i>
+                                <strong>Panduan Mom Test:</strong> Tanyakan perilaku masa lalu, bukan opini hipotesis. Gali "Mengapa?" minimal 5x.
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-1">Hasil Wawancara Pelanggan</label>
+                                <textarea rows="4" x-model="formData.diagnosis.empathy.interview" class="w-full p-4 rounded-xl border border-slate-300 text-sm" placeholder="Ringkasan pain points utama & insight..."></textarea>
+                            </div>
+                            <div class="flex justify-end">
+                                <button @click="saveData(); showToast('Empathy Map disimpan!', 'success')" class="px-6 py-3 bg-emerald-600 text-white font-bold rounded-xl shadow-lg">Simpan</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- STRATEGI -->
+                    <div x-show="currentView === 'strategi'" class="space-y-6" x-data="{ tab: 'stp' }">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-4">
+                            <div>
+                                <span class="text-xs font-bold text-brand-600 uppercase">Fase 2</span>
+                                <h2 class="text-2xl font-extrabold text-slate-900">Strategi & Model Bisnis</h2>
+                            </div>
+                            <div class="flex flex-wrap gap-2">
+                                <button @click="tab = 'stp'" class="px-3 py-2 rounded-xl text-xs sm:text-sm font-bold transition" :class="tab === 'stp' ? 'bg-brand-600 text-white' : 'bg-white text-slate-600 border'">STP</button>
+                                <button @click="tab = 'vpc'" class="px-3 py-2 rounded-xl text-xs sm:text-sm font-bold transition" :class="tab === 'vpc' ? 'bg-brand-600 text-white' : 'bg-white text-slate-600 border'">VPC</button>
+                                <button @click="tab = 'bmc'" class="px-3 py-2 rounded-xl text-xs sm:text-sm font-bold transition" :class="tab === 'bmc' ? 'bg-brand-600 text-white' : 'bg-white text-slate-600 border'">BMC</button>
+                                <button @click="tab = 'swot'" class="px-3 py-2 rounded-xl text-xs sm:text-sm font-bold transition" :class="tab === 'swot' ? 'bg-brand-600 text-white' : 'bg-white text-slate-600 border'">SWOT</button>
+                                <button @click="tab = 'soar'" x-show="formData.profile.userType === 'existing'" class="px-3 py-2 rounded-xl text-xs sm:text-sm font-bold transition" :class="tab === 'soar' ? 'bg-brand-600 text-white' : 'bg-white text-slate-600 border'">SOAR</button>
+                                <button @click="tab = 'portofolio'" class="px-3 py-2 rounded-xl text-xs sm:text-sm font-bold transition" :class="tab === 'portofolio' ? 'bg-brand-600 text-white' : 'bg-white text-slate-600 border'">Portofolio</button>
+                            </div>
+                        </div>
+
+                        <div x-show="tab === 'stp'" class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+                            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+                                <h3 class="text-lg font-bold text-slate-900">Segmenting · Targeting · Positioning</h3>
+                                <button @click="generateAIContent('stp')" class="px-4 py-2.5 bg-brand-600 text-white rounded-xl text-sm font-bold shadow-md flex items-center justify-center">
+                                    <i class="fas fa-wand-magic-sparkles mr-2"></i> Generate AI
+                                </button>
+                            </div>
+                            <div class="grid md:grid-cols-3 gap-4">
+                                <div class="bg-blue-50 p-5 rounded-2xl border border-blue-100">
+                                    <label class="block text-sm font-bold text-blue-900 mb-2">Segmentasi</label>
+                                    <textarea rows="4" x-model="formData.strategy.stp.segmenting" class="w-full p-3 rounded-xl border border-blue-200 text-sm bg-white"></textarea>
+                                </div>
+                                <div class="bg-emerald-50 p-5 rounded-2xl border border-emerald-100">
+                                    <label class="block text-sm font-bold text-emerald-900 mb-2">Targeting</label>
+                                    <textarea rows="4" x-model="formData.strategy.stp.targeting" class="w-full p-3 rounded-xl border border-emerald-200 text-sm bg-white"></textarea>
+                                </div>
+                                <div class="bg-purple-50 p-5 rounded-2xl border border-purple-100">
+                                    <label class="block text-sm font-bold text-purple-900 mb-2">Positioning</label>
+                                    <textarea rows="4" x-model="formData.strategy.stp.positioning" class="w-full p-3 rounded-xl border border-purple-200 text-sm bg-white"></textarea>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-1">Positioning Statement</label>
+                                <input type="text" x-model="formData.strategy.stp.statement" class="w-full p-3 border rounded-xl text-sm" placeholder="Untuk [target] yang [kebutuhan], [brand] adalah [kategori] yang [diferensiasi].">
+                            </div>
+                            <div class="flex justify-end">
+                                <button @click="saveData(); showToast('STP disimpan!', 'success')" class="px-6 py-3 bg-emerald-600 text-white font-bold rounded-xl shadow-lg">Simpan</button>
+                            </div>
+                        </div>
+
+                        <div x-show="tab === 'vpc'" class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+                            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+                                <h3 class="text-lg font-bold text-slate-900">Value Proposition Canvas</h3>
+                                <button @click="generateAIContent('vpc')" class="px-4 py-2.5 bg-brand-600 text-white rounded-xl text-sm font-bold shadow-md flex items-center justify-center">
+                                    <i class="fas fa-wand-magic-sparkles mr-2"></i> Generate AI
+                                </button>
+                            </div>
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div class="space-y-4">
+                                    <h4 class="font-bold text-slate-900 border-b pb-2">Value Map (Produk Anda)</h4>
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-600 mb-1">Products & Services</label>
+                                        <textarea rows="2" x-model="formData.strategy.vpc.products" class="w-full p-3 border rounded-xl text-sm"></textarea>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-600 mb-1">Pain Relievers</label>
+                                        <textarea rows="2" x-model="formData.strategy.vpc.painRelievers" class="w-full p-3 border rounded-xl text-sm"></textarea>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-600 mb-1">Gain Creators</label>
+                                        <textarea rows="2" x-model="formData.strategy.vpc.gainCreators" class="w-full p-3 border rounded-xl text-sm"></textarea>
+                                    </div>
+                                </div>
+                                <div class="space-y-4">
+                                    <h4 class="font-bold text-slate-900 border-b pb-2">Customer Profile (Pelanggan)</h4>
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-600 mb-1">Customer Jobs</label>
+                                        <textarea rows="2" x-model="formData.strategy.vpc.jobs" class="w-full p-3 border rounded-xl text-sm"></textarea>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-600 mb-1">Pains</label>
+                                        <textarea rows="2" x-model="formData.strategy.vpc.pains" class="w-full p-3 border rounded-xl text-sm"></textarea>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-600 mb-1">Gains</label>
+                                        <textarea rows="2" x-model="formData.strategy.vpc.gains" class="w-full p-3 border rounded-xl text-sm"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex justify-end">
+                                <button @click="saveData(); showToast('VPC disimpan!', 'success')" class="px-6 py-3 bg-emerald-600 text-white font-bold rounded-xl shadow-lg">Simpan</button>
+                            </div>
+                        </div>
+
+                        <div x-show="tab === 'bmc'" class="space-y-4">
+                            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 bg-white p-6 rounded-3xl border shadow-sm">
+                                <div>
+                                    <h3 class="text-lg font-bold text-slate-900">Business Model Canvas</h3>
+                                    <p class="text-xs text-slate-500">9 Blok pilar model bisnis.</p>
+                                </div>
+                                <button @click="generateAIContent('bmc')" class="px-4 py-2.5 bg-brand-600 text-white rounded-xl text-sm font-bold shadow-md flex items-center justify-center">
+                                    <i class="fas fa-wand-magic-sparkles mr-2"></i> Generate AI BMC
+                                </button>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <template x-for="(block, idx) in bmcBlocks" :key="block.key">
+                                    <div class="bg-white p-5 rounded-2xl border shadow-sm space-y-2">
+                                        <label class="block text-xs font-extrabold uppercase text-brand-600" x-text="`${idx+1}. ${block.label}`"></label>
+                                        <textarea rows="4" x-model="formData.strategy.bmc[block.key]" class="w-full p-3 border rounded-xl text-sm" :placeholder="block.ph"></textarea>
+                                    </div>
+                                </template>
+                            </div>
+                            <div class="flex justify-end">
+                                <button @click="saveData(); showToast('BMC disimpan!', 'success')" class="px-6 py-3 bg-emerald-600 text-white font-bold rounded-xl shadow-lg">Simpan BMC</button>
+                            </div>
+                        </div>
+
+                        <div x-show="tab === 'swot'" class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+                            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+                                <h3 class="text-lg font-bold text-slate-900">SWOT Analysis</h3>
+                                <button @click="generateAIContent('swot')" class="px-4 py-2.5 bg-brand-600 text-white rounded-xl text-sm font-bold shadow-md flex items-center justify-center">
+                                    <i class="fas fa-wand-magic-sparkles mr-2"></i> Generate AI
+                                </button>
+                            </div>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div class="bg-emerald-50 p-5 rounded-2xl border border-emerald-100">
+                                    <label class="block text-sm font-bold text-emerald-900 mb-2"><i class="fas fa-plus-circle mr-1"></i> Strengths</label>
+                                    <textarea rows="4" x-model="formData.strategy.swot.strengths" class="w-full p-3 rounded-xl border border-emerald-200 text-sm bg-white"></textarea>
+                                </div>
+                                <div class="bg-rose-50 p-5 rounded-2xl border border-rose-100">
+                                    <label class="block text-sm font-bold text-rose-900 mb-2"><i class="fas fa-minus-circle mr-1"></i> Weaknesses</label>
+                                    <textarea rows="4" x-model="formData.strategy.swot.weaknesses" class="w-full p-3 rounded-xl border border-rose-200 text-sm bg-white"></textarea>
+                                </div>
+                                <div class="bg-blue-50 p-5 rounded-2xl border border-blue-100">
+                                    <label class="block text-sm font-bold text-blue-900 mb-2"><i class="fas fa-arrow-up mr-1"></i> Opportunities</label>
+                                    <textarea rows="4" x-model="formData.strategy.swot.opportunities" class="w-full p-3 rounded-xl border border-blue-200 text-sm bg-white"></textarea>
+                                </div>
+                                <div class="bg-amber-50 p-5 rounded-2xl border border-amber-100">
+                                    <label class="block text-sm font-bold text-amber-900 mb-2"><i class="fas fa-exclamation-triangle mr-1"></i> Threats</label>
+                                    <textarea rows="4" x-model="formData.strategy.swot.threats" class="w-full p-3 rounded-xl border border-amber-200 text-sm bg-white"></textarea>
+                                </div>
+                            </div>
+                            <div class="flex justify-end">
+                                <button @click="saveData(); showToast('SWOT disimpan!', 'success')" class="px-6 py-3 bg-emerald-600 text-white font-bold rounded-xl shadow-lg">Simpan</button>
+                            </div>
+                        </div>
+
+                        <div x-show="tab === 'soar'" class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+                            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+                                <h3 class="text-lg font-bold text-slate-900">SOAR Analysis</h3>
+                                <button @click="generateAIContent('soar')" class="px-4 py-2.5 bg-brand-600 text-white rounded-xl text-sm font-bold shadow-md flex items-center justify-center">
+                                    <i class="fas fa-wand-magic-sparkles mr-2"></i> Generate AI
+                                </button>
+                            </div>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div class="bg-emerald-50 p-5 rounded-2xl border border-emerald-100">
+                                    <label class="block text-sm font-bold text-emerald-900 mb-2">Strengths</label>
+                                    <textarea rows="3" x-model="formData.strategy.soar.strengths" class="w-full p-3 rounded-xl border text-sm bg-white"></textarea>
+                                </div>
+                                <div class="bg-blue-50 p-5 rounded-2xl border border-blue-100">
+                                    <label class="block text-sm font-bold text-blue-900 mb-2">Opportunities</label>
+                                    <textarea rows="3" x-model="formData.strategy.soar.opportunities" class="w-full p-3 rounded-xl border text-sm bg-white"></textarea>
+                                </div>
+                                <div class="bg-purple-50 p-5 rounded-2xl border border-purple-100">
+                                    <label class="block text-sm font-bold text-purple-900 mb-2">Aspirations</label>
+                                    <textarea rows="3" x-model="formData.strategy.soar.aspirations" class="w-full p-3 rounded-xl border text-sm bg-white"></textarea>
+                                </div>
+                                <div class="bg-amber-50 p-5 rounded-2xl border border-amber-100">
+                                    <label class="block text-sm font-bold text-amber-900 mb-2">Results</label>
+                                    <textarea rows="3" x-model="formData.strategy.soar.results" class="w-full p-3 rounded-xl border text-sm bg-white"></textarea>
+                                </div>
+                            </div>
+                            <div class="flex justify-end">
+                                <button @click="saveData(); showToast('SOAR disimpan!', 'success')" class="px-6 py-3 bg-emerald-600 text-white font-bold rounded-xl shadow-lg">Simpan</button>
+                            </div>
+                        </div>
+
+                        <div x-show="tab === 'portofolio'" class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+                            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+                                <div>
+                                    <h3 class="text-lg font-bold text-slate-900">Analisis Portofolio Produk</h3>
+                                    <p class="text-xs text-slate-500">BCG Matrix, Ansoff, dan Kano Model.</p>
+                                </div>
+                                <button @click="generateAIContent('portofolio')" class="px-4 py-2.5 bg-brand-600 text-white rounded-xl text-sm font-bold shadow-md flex items-center justify-center">
+                                    <i class="fas fa-wand-magic-sparkles mr-2"></i> Generate AI
+                                </button>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-800 mb-3">BCG Matrix</h4>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-4">
+                                        <p class="font-bold text-amber-900 text-sm mb-2">⭐ Star</p>
+                                        <textarea rows="3" x-model="formData.strategy.bcg.star" class="w-full p-2 border rounded-lg text-xs bg-white"></textarea>
+                                    </div>
+                                    <div class="bg-emerald-50 border-2 border-emerald-200 rounded-2xl p-4">
+                                        <p class="font-bold text-emerald-900 text-sm mb-2">🐄 Cash Cow</p>
+                                        <textarea rows="3" x-model="formData.strategy.bcg.cashCow" class="w-full p-2 border rounded-lg text-xs bg-white"></textarea>
+                                    </div>
+                                    <div class="bg-blue-50 border-2 border-blue-200 rounded-2xl p-4">
+                                        <p class="font-bold text-blue-900 text-sm mb-2">❓ Question Mark</p>
+                                        <textarea rows="3" x-model="formData.strategy.bcg.question" class="w-full p-2 border rounded-lg text-xs bg-white"></textarea>
+                                    </div>
+                                    <div class="bg-rose-50 border-2 border-rose-200 rounded-2xl p-4">
+                                        <p class="font-bold text-rose-900 text-sm mb-2">🐕 Dog</p>
+                                        <textarea rows="3" x-model="formData.strategy.bcg.dog" class="w-full p-2 border rounded-lg text-xs bg-white"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-800 mb-3">Ansoff Matrix</h4>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div class="bg-slate-50 border rounded-2xl p-4">
+                                        <p class="font-bold text-slate-800 text-xs mb-2">Market Penetration</p>
+                                        <textarea rows="2" x-model="formData.strategy.ansoff.penetration" class="w-full p-2 border rounded-lg text-xs"></textarea>
+                                    </div>
+                                    <div class="bg-slate-50 border rounded-2xl p-4">
+                                        <p class="font-bold text-slate-800 text-xs mb-2">Market Development</p>
+                                        <textarea rows="2" x-model="formData.strategy.ansoff.marketDev" class="w-full p-2 border rounded-lg text-xs"></textarea>
+                                    </div>
+                                    <div class="bg-slate-50 border rounded-2xl p-4">
+                                        <p class="font-bold text-slate-800 text-xs mb-2">Product Development</p>
+                                        <textarea rows="2" x-model="formData.strategy.ansoff.productDev" class="w-full p-2 border rounded-lg text-xs"></textarea>
+                                    </div>
+                                    <div class="bg-slate-50 border rounded-2xl p-4">
+                                        <p class="font-bold text-slate-800 text-xs mb-2">Diversification</p>
+                                        <textarea rows="2" x-model="formData.strategy.ansoff.diversification" class="w-full p-2 border rounded-lg text-xs"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-800 mb-3">Kano Model</h4>
+                                <div class="grid md:grid-cols-3 gap-3">
+                                    <div class="bg-rose-50 border rounded-2xl p-4">
+                                        <p class="font-bold text-rose-800 text-xs mb-2">Must-Be</p>
+                                        <textarea rows="3" x-model="formData.strategy.kano.mustBe" class="w-full p-2 border rounded-lg text-xs bg-white"></textarea>
+                                    </div>
+                                    <div class="bg-blue-50 border rounded-2xl p-4">
+                                        <p class="font-bold text-blue-800 text-xs mb-2">Performance</p>
+                                        <textarea rows="3" x-model="formData.strategy.kano.performance" class="w-full p-2 border rounded-lg text-xs bg-white"></textarea>
+                                    </div>
+                                    <div class="bg-amber-50 border rounded-2xl p-4">
+                                        <p class="font-bold text-amber-800 text-xs mb-2">Attractive</p>
+                                        <textarea rows="3" x-model="formData.strategy.kano.attractive" class="w-full p-2 border rounded-lg text-xs bg-white"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex justify-end">
+                                <button @click="saveData(); showToast('Portofolio disimpan!', 'success')" class="px-6 py-3 bg-emerald-600 text-white font-bold rounded-xl shadow-lg">Simpan</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- BRANDING (FASE 3) -->
+                    <div x-show="currentView === 'branding'" class="space-y-6">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-4">
+                            <div>
+                                <span class="text-xs font-bold text-brand-600 uppercase">Fase 3</span>
+                                <h2 class="text-2xl font-extrabold text-slate-900">Produk & Brand Identity</h2>
+                            </div>
+                            <button @click="generateAIContent('branding')" class="px-4 py-2.5 bg-gradient-to-r from-brand-600 to-emerald-600 text-white rounded-xl text-sm font-bold shadow-md flex items-center justify-center">
+                                <i class="fas fa-wand-magic-sparkles mr-2"></i> Generate Branding Kit
+                            </button>
+                        </div>
+
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-4 md:col-span-2">
+                                <h3 class="text-lg font-bold text-slate-900"><i class="fas fa-box-open text-brand-600 mr-2"></i> Top 3 Rekomendasi Produk/Jasa</h3>
+                                <p class="text-xs text-slate-500">Berdasarkan STP, VPC, dan analisis kompetitor.</p>
+                                <div class="grid md:grid-cols-3 gap-4">
+                                    <template x-for="i in [0,1,2]" :key="i">
+                                        <div class="bg-gradient-to-br from-slate-50 to-white border rounded-2xl p-4 space-y-2">
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-xs font-bold text-brand-600" x-text="`Produk ${i+1}`"></span>
+                                                <input type="number" min="1" max="10" x-model="formData.branding.products[i].score" class="w-14 p-1 border rounded-lg text-xs text-center font-bold">
+                                            </div>
+                                            <input type="text" x-model="formData.branding.products[i].name" class="w-full p-2 border rounded-lg text-sm font-bold" placeholder="Nama produk">
+                                            <textarea rows="2" x-model="formData.branding.products[i].reason" class="w-full p-2 border rounded-lg text-xs" placeholder="Alasan potensial..."></textarea>
+                                        </div>
+                                    </template>
                                 </div>
                             </div>
 
-                            <!-- Executive Summary Report -->
-                            <div class="bg-white p-6 sm:p-10 rounded-3xl border border-slate-200 shadow-sm space-y-8">
-
-                                <!-- Cover -->
-                                <div class="text-center border-b pb-8">
-                                    <div class="inline-flex items-center px-3 py-1 bg-brand-50 text-brand-700 rounded-full text-xs font-semibold mb-4">
-                                        <i class="fas fa-file-alt mr-2"></i> Laporan Eksekutif
-                                    </div>
-                                    <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-2"
-                                        x-text="formData.profile.businessName || 'Bisnis Tanpa Nama'"></h1>
-                                    <p class="text-slate-500">
-                                        Sektor: <span class="font-semibold text-slate-700" x-text="formData.profile.industry || '-'"></span>
-                                        |
-                                        Tipe: <span class="font-semibold text-slate-700"
-                                                    x-text="formData.profile.userType === 'new' ? 'Bisnis Baru' : 'Bisnis Berjalan'"></span>
-                                    </p>
-                                    <p class="text-xs text-slate-400 mt-3">
-                                        Dibuat: <span x-text="new Date().toLocaleDateString('id-ID', {year:'numeric', month:'long', day:'numeric'})"></span>
-                                    </p>
+                            <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+                                <h3 class="text-lg font-bold text-slate-900"><i class="fas fa-bullseye text-brand-600 mr-2"></i> Brand Strategy</h3>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-600 mb-1">Brand Purpose</label>
+                                    <textarea rows="2" x-model="formData.branding.purpose" class="w-full p-3 border rounded-xl text-sm"></textarea>
                                 </div>
-
-                                <!-- Executive Summary AI -->
-                                <div x-show="formData.report.summary" class="bg-gradient-to-br from-brand-50 to-emerald-50 rounded-2xl p-6 border border-brand-100">
-                                    <h2 class="text-lg font-bold text-brand-900 mb-3">
-                                        <i class="fas fa-robot mr-2"></i> Ringkasan Eksekutif (AI)
-                                    </h2>
-                                    <p class="text-sm text-slate-700 leading-relaxed whitespace-pre-line"
-                                       x-text="formData.report.summary"></p>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-600 mb-1">Brand Personality</label>
+                                    <input type="text" x-model="formData.branding.personality" class="w-full p-3 border rounded-xl text-sm" placeholder="Ramah, energik, tepercaya">
                                 </div>
-
-                                <!-- Section 1: Diagnosis -->
-                                <div class="space-y-3">
-                                    <h2 class="text-xl font-bold text-brand-600 border-b pb-2">
-                                        <i class="fas fa-stethoscope mr-2"></i> 1. Diagnosis & Analisis Pasar
-                                    </h2>
-                                    <div class="grid md:grid-cols-2 gap-4 text-sm">
-                                        <div class="bg-slate-50 p-4 rounded-xl">
-                                            <p class="font-bold text-slate-700 mb-1">PESTEL — Political/Economic</p>
-                                            <p class="text-slate-600" x-text="formData.diagnosis.pestel.political || 'Belum diisi'"></p>
-                                        </div>
-                                        <div class="bg-slate-50 p-4 rounded-xl">
-                                            <p class="font-bold text-slate-700 mb-1">PESTEL — Social/Cultural</p>
-                                            <p class="text-slate-600" x-text="formData.diagnosis.pestel.social || 'Belum diisi'"></p>
-                                        </div>
-                                        <div class="bg-slate-50 p-4 rounded-xl">
-                                            <p class="font-bold text-slate-700 mb-1">PESTEL — Technological</p>
-                                            <p class="text-slate-600" x-text="formData.diagnosis.pestel.tech || 'Belum diisi'"></p>
-                                        </div>
-                                        <div class="bg-slate-50 p-4 rounded-xl">
-                                            <p class="font-bold text-slate-700 mb-1">PESTEL — Legal</p>
-                                            <p class="text-slate-600" x-text="formData.diagnosis.pestel.legal || 'Belum diisi'"></p>
-                                        </div>
-                                    </div>
-                                    <div class="bg-slate-50 p-4 rounded-xl text-sm">
-                                        <p class="font-bold text-slate-700 mb-1">Celah Pasar & USP</p>
-                                        <p class="text-slate-600" x-text="formData.diagnosis.competitorGap || 'Belum diisi'"></p>
-                                    </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-600 mb-1">Brand Voice</label>
+                                    <input type="text" x-model="formData.branding.voice" class="w-full p-3 border rounded-xl text-sm" placeholder="Santai tapi informatif">
                                 </div>
-
-                                <!-- Section 2: Strategi -->
-                                <div class="space-y-3">
-                                    <h2 class="text-xl font-bold text-brand-600 border-b pb-2">
-                                        <i class="fas fa-chess mr-2"></i> 2. Strategi & Model Bisnis
-                                    </h2>
-                                    <div class="bg-slate-50 p-4 rounded-xl text-sm">
-                                        <p class="font-bold text-slate-700 mb-1">Positioning Statement</p>
-                                        <p class="text-slate-600 italic" x-text="formData.strategy.stp.statement || 'Belum diisi'"></p>
-                                    </div>
-                                    <div class="grid md:grid-cols-2 gap-4 text-sm">
-                                        <div class="bg-slate-50 p-4 rounded-xl">
-                                            <p class="font-bold text-slate-700 mb-1">Value Proposition</p>
-                                            <p class="text-slate-600" x-text="formData.strategy.bmc.value || 'Belum diisi'"></p>
-                                        </div>
-                                        <div class="bg-slate-50 p-4 rounded-xl">
-                                            <p class="font-bold text-slate-700 mb-1">Target Segment</p>
-                                            <p class="text-slate-600" x-text="formData.strategy.bmc.segments || 'Belum diisi'"></p>
-                                        </div>
-                                        <div class="bg-slate-50 p-4 rounded-xl">
-                                            <p class="font-bold text-slate-700 mb-1">Key Activities</p>
-                                            <p class="text-slate-600" x-text="formData.strategy.bmc.activities || 'Belum diisi'"></p>
-                                        </div>
-                                        <div class="bg-slate-50 p-4 rounded-xl">
-                                            <p class="font-bold text-slate-700 mb-1">Revenue Streams</p>
-                                            <p class="text-slate-600" x-text="formData.strategy.bmc.revenue || 'Belum diisi'"></p>
-                                        </div>
-                                    </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-600 mb-1">Tagline / Slogan</label>
+                                    <input type="text" x-model="formData.branding.tagline" class="w-full p-3 border rounded-xl text-sm font-bold" placeholder="Contoh: Secangkir Inspirasi Setiap Hari">
                                 </div>
+                            </div>
 
-                                <!-- Section 3: Branding -->
-                                <div class="space-y-3">
-                                    <h2 class="text-xl font-bold text-brand-600 border-b pb-2">
-                                        <i class="fas fa-palette mr-2"></i> 3. Brand Identity
-                                    </h2>
-                                    <div class="grid md:grid-cols-2 gap-4 text-sm">
-                                        <div class="bg-slate-50 p-4 rounded-xl">
-                                            <p class="font-bold text-slate-700 mb-1">Tagline</p>
-                                            <p class="text-slate-600 italic" x-text="formData.branding.tagline || 'Belum diisi'"></p>
-                                        </div>
-                                        <div class="bg-slate-50 p-4 rounded-xl">
-                                            <p class="font-bold text-slate-700 mb-1">Brand Voice & Personality</p>
-                                            <p class="text-slate-600" x-text="formData.branding.voice || 'Belum diisi'"></p>
-                                        </div>
-                                    </div>
-                                    <div class="bg-slate-50 p-4 rounded-xl text-sm">
-                                        <p class="font-bold text-slate-700 mb-2">Palet Warna</p>
-                                        <div class="flex gap-2">
-                                            <template x-for="(c, i) in formData.branding.colors" :key="i">
-                                                <div class="w-10 h-10 rounded-lg shadow-sm" :style="`background: ${c}`"></div>
-                                            </template>
-                                        </div>
-                                    </div>
-                                    <div class="bg-slate-50 p-4 rounded-xl text-sm">
-                                        <p class="font-bold text-slate-700 mb-1">Top 3 Rekomendasi Produk</p>
-                                        <ol class="list-decimal list-inside text-slate-600 space-y-1">
-                                            <template x-for="(p, i) in formData.branding.products" :key="i">
-                                                <li x-show="p.name">
-                                                    <span class="font-semibold" x-text="p.name"></span>
-                                                    <span class="text-xs text-emerald-600 ml-2" x-show="p.score"
-                                                          x-text="`(Skor: ${p.score}/10)`"></span>
-                                                </li>
-                                            </template>
-                                        </ol>
-                                    </div>
-                                </div>
-
-                                <!-- Section 4: Financial -->
-                                <div class="space-y-3">
-                                    <h2 class="text-xl font-bold text-brand-600 border-b pb-2">
-                                        <i class="fas fa-calculator mr-2"></i> 4. Perencanaan Finansial
-                                    </h2>
-                                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
-                                        <div class="bg-slate-50 p-4 rounded-xl">
-                                            <p class="text-xs font-bold text-slate-500 uppercase">CAC</p>
-                                            <p class="font-bold text-slate-800 text-lg" x-text="formData.financial.cac || '-'"></p>
-                                        </div>
-                                        <div class="bg-slate-50 p-4 rounded-xl">
-                                            <p class="text-xs font-bold text-slate-500 uppercase">LTV</p>
-                                            <p class="font-bold text-slate-800 text-lg" x-text="formData.financial.ltv || '-'"></p>
-                                        </div>
-                                        <div class="bg-slate-50 p-4 rounded-xl">
-                                            <p class="text-xs font-bold text-slate-500 uppercase">Margin</p>
-                                            <p class="font-bold text-slate-800 text-lg" x-text="formData.financial.margin || '-'"></p>
-                                        </div>
-                                        <div class="bg-slate-50 p-4 rounded-xl">
-                                            <p class="text-xs font-bold text-slate-500 uppercase">BEP</p>
-                                            <p class="font-bold text-slate-800 text-lg" x-text="formData.financial.bep || '-'"></p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!-- Section 5: Roadmap -->
-                                <div class="space-y-3">
-                                    <h2 class="text-xl font-bold text-brand-600 border-b pb-2">
-                                        <i class="fas fa-rocket mr-2"></i> 5. Roadmap Eksekusi
-                                    </h2>
-                                    <div class="space-y-2 text-sm">
-                                        <template x-for="(item, i) in formData.execution.roadmap" :key="i">
-                                            <div x-show="item.title" class="flex items-center space-x-3 bg-slate-50 p-3 rounded-xl">
-                                                <span class="w-8 h-8 rounded-lg bg-brand-100 text-brand-700 flex items-center justify-center text-xs font-bold shrink-0"
-                                                      x-text="`Q${item.quarter || 1}`"></span>
-                                                <span class="text-slate-700" x-text="item.title"></span>
+                            <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+                                <h3 class="text-lg font-bold text-slate-900"><i class="fas fa-palette text-brand-600 mr-2"></i> Brand Identity</h3>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-600 mb-2">Palet Warna</label>
+                                    <div class="flex flex-wrap gap-2">
+                                        <template x-for="(color, i) in formData.branding.colors" :key="i">
+                                            <div class="relative group">
+                                                <input type="color" x-model="formData.branding.colors[i]" class="swatch border-0 cursor-pointer">
+                                                <button @click="formData.branding.colors.splice(i,1)" class="absolute -top-1 -right-1 w-5 h-5 bg-rose-500 text-white rounded-full text-xs opacity-0 group-hover:opacity-100 transition">
+                                                    <i class="fas fa-times text-[8px]"></i>
+                                                </button>
                                             </div>
+                                        </template>
+                                        <button @click="formData.branding.colors.push('#2563eb')" class="w-12 h-12 rounded-xl border-2 border-dashed border-slate-300 text-slate-400 hover:border-brand-500 hover:text-brand-500 transition flex items-center justify-center">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-600 mb-1">Tipografi Utama</label>
+                                    <input type="text" x-model="formData.branding.font" class="w-full p-3 border rounded-xl text-sm" placeholder="Plus Jakarta Sans">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-600 mb-1">Logo Direction</label>
+                                    <textarea rows="2" x-model="formData.branding.logo" class="w-full p-3 border rounded-xl text-sm" placeholder="Konsep: minimalis, ikonik, mudah diingat..."></textarea>
+                                </div>
+                            </div>
+
+                            <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-4 md:col-span-2">
+                                <h3 class="text-lg font-bold text-slate-900"><i class="fas fa-images text-brand-600 mr-2"></i> Brand Application (Preview)</h3>
+                                <div class="grid md:grid-cols-3 gap-4">
+                                    <div class="border rounded-2xl p-4 text-center" :style="`background: ${formData.branding.colors[0] || '#2563eb'}15`">
+                                        <div class="w-16 h-16 mx-auto rounded-2xl mb-3 flex items-center justify-center text-white font-extrabold text-2xl"
+                                             :style="`background: linear-gradient(135deg, ${formData.branding.colors[0] || '#2563eb'}, ${formData.branding.colors[1] || '#10b981'})`">
+                                            <span x-text="formData.profile.businessName ? formData.profile.businessName.charAt(0) : 'B'"></span>
+                                        </div>
+                                        <p class="font-bold text-slate-900 text-sm" x-text="formData.profile.businessName"></p>
+                                        <p class="text-xs text-slate-500 mt-1 italic" x-text="formData.branding.tagline || 'Tagline Anda'"></p>
+                                    </div>
+                                    <div class="border rounded-2xl p-4 text-center bg-white shadow-sm">
+                                        <div class="h-2 w-full rounded-full mb-3" :style="`background: ${formData.branding.colors[0] || '#2563eb'}`"></div>
+                                        <p class="font-extrabold text-slate-900 text-lg" x-text="formData.profile.businessName"></p>
+                                        <p class="text-xs text-slate-500" x-text="formData.profile.industry"></p>
+                                    </div>
+                                    <div class="border rounded-2xl p-4 text-center" :style="`background: ${formData.branding.colors[2] || '#0f172a'}; color: white`">
+                                        <i class="fas fa-box text-3xl mb-2 opacity-30"></i>
+                                        <p class="font-bold text-sm" x-text="formData.branding.tagline || 'Brand Anda'"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex justify-end">
+                            <button @click="saveData(); showToast('Branding disimpan!', 'success')" class="px-6 py-3 bg-emerald-600 text-white font-bold rounded-xl shadow-lg">Simpan Branding</button>
+                        </div>
+                    </div>
+
+                    <!-- PERENCANAAN (FASE 4) -->
+                    <div x-show="currentView === 'perencanaan'" class="space-y-6">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-4">
+                            <div>
+                                <span class="text-xs font-bold text-brand-600 uppercase">Fase 4</span>
+                                <h2 class="text-2xl font-extrabold text-slate-900">Perencanaan Finansial & Risiko</h2>
+                            </div>
+                            <button @click="generateAIContent('financial')" class="px-4 py-2.5 bg-brand-600 text-white rounded-xl text-sm font-bold shadow-md flex items-center justify-center">
+                                <i class="fas fa-wand-magic-sparkles mr-2"></i> Generate AI
+                            </button>
+                        </div>
+
+                        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div class="bg-white p-5 rounded-2xl border shadow-sm space-y-2">
+                                <label class="block text-xs font-bold text-slate-500 uppercase">CAC</label>
+                                <input type="text" x-model="formData.financial.cac" class="w-full p-3 border rounded-xl text-sm font-bold" placeholder="Rp 25.000">
+                                <p class="text-xs text-slate-400">Customer Acquisition Cost</p>
+                            </div>
+                            <div class="bg-white p-5 rounded-2xl border shadow-sm space-y-2">
+                                <label class="block text-xs font-bold text-slate-500 uppercase">LTV</label>
+                                <input type="text" x-model="formData.financial.ltv" class="w-full p-3 border rounded-xl text-sm font-bold" placeholder="Rp 450.000">
+                                <p class="text-xs text-slate-400">Lifetime Value</p>
+                            </div>
+                            <div class="bg-white p-5 rounded-2xl border shadow-sm space-y-2">
+                                <label class="block text-xs font-bold text-slate-500 uppercase">Margin</label>
+                                <input type="text" x-model="formData.financial.margin" class="w-full p-3 border rounded-xl text-sm font-bold" placeholder="35%">
+                                <p class="text-xs text-slate-400">Margin per unit</p>
+                            </div>
+                            <div class="bg-white p-5 rounded-2xl border shadow-sm space-y-2">
+                                <label class="block text-xs font-bold text-slate-500 uppercase">BEP</label>
+                                <input type="text" x-model="formData.financial.bep" class="w-full p-3 border rounded-xl text-sm font-bold" placeholder="350 unit/bulan">
+                                <p class="text-xs text-slate-400">Break-Even Point</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+                            <h3 class="text-lg font-bold text-slate-900"><i class="fas fa-chart-line text-brand-600 mr-2"></i> Proyeksi Laba Rugi 12 Bulan</h3>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm border rounded-xl overflow-hidden">
+                                    <thead class="bg-slate-50">
+                                        <tr>
+                                            <th class="text-left p-3 font-bold text-slate-700">Item</th>
+                                            <th class="text-right p-3 font-bold text-slate-700">Bulan 1-3</th>
+                                            <th class="text-right p-3 font-bold text-slate-700">Bulan 4-6</th>
+                                            <th class="text-right p-3 font-bold text-slate-700">Bulan 7-12</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr class="border-t">
+                                            <td class="p-3 font-semibold">Revenue</td>
+                                            <td class="p-2"><input type="text" x-model="formData.financial.pl.rev1" class="w-full p-2 border rounded-lg text-sm text-right"></td>
+                                            <td class="p-2"><input type="text" x-model="formData.financial.pl.rev2" class="w-full p-2 border rounded-lg text-sm text-right"></td>
+                                            <td class="p-2"><input type="text" x-model="formData.financial.pl.rev3" class="w-full p-2 border rounded-lg text-sm text-right"></td>
+                                        </tr>
+                                        <tr class="border-t">
+                                            <td class="p-3 font-semibold">Cost</td>
+                                            <td class="p-2"><input type="text" x-model="formData.financial.pl.cost1" class="w-full p-2 border rounded-lg text-sm text-right"></td>
+                                            <td class="p-2"><input type="text" x-model="formData.financial.pl.cost2" class="w-full p-2 border rounded-lg text-sm text-right"></td>
+                                            <td class="p-2"><input type="text" x-model="formData.financial.pl.cost3" class="w-full p-2 border rounded-lg text-sm text-right"></td>
+                                        </tr>
+                                        <tr class="border-t bg-emerald-50">
+                                            <td class="p-3 font-bold text-emerald-900">Profit</td>
+                                            <td class="p-2"><input type="text" x-model="formData.financial.pl.profit1" class="w-full p-2 border rounded-lg text-sm text-right font-bold"></td>
+                                            <td class="p-2"><input type="text" x-model="formData.financial.pl.profit2" class="w-full p-2 border rounded-lg text-sm text-right font-bold"></td>
+                                            <td class="p-2"><input type="text" x-model="formData.financial.pl.profit3" class="w-full p-2 border rounded-lg text-sm text-right font-bold"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+                            <h3 class="text-lg font-bold text-slate-900"><i class="fas fa-shield-alt text-rose-600 mr-2"></i> Risk Register</h3>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm border rounded-xl overflow-hidden">
+                                    <thead class="bg-slate-50">
+                                        <tr>
+                                            <th class="text-left p-3 font-bold text-slate-700">Risiko</th>
+                                            <th class="text-left p-3 font-bold text-slate-700">Level</th>
+                                            <th class="text-left p-3 font-bold text-slate-700">Mitigasi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <template x-for="(r, i) in formData.financial.risks" :key="i">
+                                            <tr class="border-t">
+                                                <td class="p-2"><input type="text" x-model="r.name" class="w-full p-2 border rounded-lg text-sm"></td>
+                                                <td class="p-2">
+                                                    <select x-model="r.level" class="w-full p-2 border rounded-lg text-sm">
+                                                        <option value="Low">Low</option>
+                                                        <option value="Medium">Medium</option>
+                                                        <option value="High">High</option>
+                                                    </select>
+                                                </td>
+                                                <td class="p-2"><input type="text" x-model="r.mitigation" class="w-full p-2 border rounded-lg text-sm"></td>
+                                            </tr>
+                                        </template>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <button @click="formData.financial.risks.push({name:'',level:'Medium',mitigation:''})" class="text-sm font-bold text-brand-600 hover:text-brand-700">
+                                <i class="fas fa-plus mr-1"></i> Tambah Risiko
+                            </button>
+                        </div>
+
+                        <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+                            <h3 class="text-lg font-bold text-slate-900"><i class="fas fa-key text-amber-600 mr-2"></i> Asumsi Kritis</h3>
+                            <textarea rows="4" x-model="formData.financial.assumptions" class="w-full p-4 border rounded-xl text-sm" placeholder="Asumsi yang harus benar agar strategi berhasil..."></textarea>
+                        </div>
+
+                        <div class="flex justify-end">
+                            <button @click="saveData(); showToast('Perencanaan disimpan!', 'success')" class="px-6 py-3 bg-emerald-600 text-white font-bold rounded-xl shadow-lg">Simpan Perencanaan</button>
+                        </div>
+                    </div>
+
+                    <!-- EKSEKUSI (FASE 5) -->
+                    <div x-show="currentView === 'eksekusi'" class="space-y-6">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-4">
+                            <div>
+                                <span class="text-xs font-bold text-brand-600 uppercase">Fase 5</span>
+                                <h2 class="text-2xl font-extrabold text-slate-900">Eksekusi & Roadmap 12 Bulan</h2>
+                            </div>
+                            <button @click="generateAIContent('execution')" class="px-4 py-2.5 bg-brand-600 text-white rounded-xl text-sm font-bold shadow-md flex items-center justify-center">
+                                <i class="fas fa-wand-magic-sparkles mr-2"></i> Generate Roadmap
+                            </button>
+                        </div>
+
+                        <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+                            <h3 class="text-lg font-bold text-slate-900"><i class="fas fa-stream text-brand-600 mr-2"></i> Timeline Roadmap</h3>
+                            <div class="grid grid-cols-4 gap-2 text-center text-xs font-bold text-slate-500">
+                                <div>Bulan 1-3</div>
+                                <div>Bulan 4-6</div>
+                                <div>Bulan 7-9</div>
+                                <div>Bulan 10-12</div>
+                            </div>
+                            <div class="space-y-3">
+                                <template x-for="(item, i) in formData.execution.roadmap" :key="i">
+                                    <div class="bg-slate-50 rounded-xl p-4 border">
+                                        <div class="flex items-center justify-between mb-3">
+                                            <input type="text" x-model="item.title" class="flex-1 p-2 border rounded-lg text-sm font-bold" placeholder="Nama milestone...">
+                                            <button @click="formData.execution.roadmap.splice(i,1)" class="ml-2 text-rose-500 hover:text-rose-700">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                        <div class="grid grid-cols-4 gap-2">
+                                            <template x-for="quarter in [1,2,3,4]" :key="quarter">
+                                                <label class="flex items-center justify-center cursor-pointer">
+                                                    <input type="checkbox" :checked="item.quarter === quarter" @change="item.quarter = quarter" class="w-5 h-5 rounded accent-brand-600">
+                                                </label>
+                                            </template>
+                                        </div>
+                                        <div x-show="item.quarter" class="gantt-bar mt-3" :style="`margin-left: calc(${(item.quarter-1) * 25}% + 4px); width: calc(25% - 8px);`"></div>
+                                    </div>
+                                </template>
+                            </div>
+                            <button @click="formData.execution.roadmap.push({title:'', quarter:1})" class="text-sm font-bold text-brand-600 hover:text-brand-700">
+                                <i class="fas fa-plus mr-1"></i> Tambah Milestone
+                            </button>
+                        </div>
+
+                        <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+                            <h3 class="text-lg font-bold text-slate-900"><i class="fas fa-tachometer-alt text-emerald-600 mr-2"></i> KPI & Metrik per Fase</h3>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div class="bg-blue-50 p-5 rounded-2xl border border-blue-100">
+                                    <p class="font-bold text-blue-900 text-sm mb-2">Bulan 1-3 (Validasi)</p>
+                                    <textarea rows="3" x-model="formData.execution.kpi.phase1" class="w-full p-2 border rounded-lg text-xs bg-white"></textarea>
+                                </div>
+                                <div class="bg-emerald-50 p-5 rounded-2xl border border-emerald-100">
+                                    <p class="font-bold text-emerald-900 text-sm mb-2">Bulan 4-6 (Launch)</p>
+                                    <textarea rows="3" x-model="formData.execution.kpi.phase2" class="w-full p-2 border rounded-lg text-xs bg-white"></textarea>
+                                </div>
+                                <div class="bg-purple-50 p-5 rounded-2xl border border-purple-100">
+                                    <p class="font-bold text-purple-900 text-sm mb-2">Bulan 7-9 (Scale)</p>
+                                    <textarea rows="3" x-model="formData.execution.kpi.phase3" class="w-full p-2 border rounded-lg text-xs bg-white"></textarea>
+                                </div>
+                                <div class="bg-amber-50 p-5 rounded-2xl border border-amber-100">
+                                    <p class="font-bold text-amber-900 text-sm mb-2">Bulan 10-12 (Optimize)</p>
+                                    <textarea rows="3" x-model="formData.execution.kpi.phase4" class="w-full p-2 border rounded-lg text-xs bg-white"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+                            <h3 class="text-lg font-bold text-slate-900"><i class="fas fa-clipboard-check text-brand-600 mr-2"></i> Checklist Aksi Mingguan</h3>
+                            <div class="space-y-2">
+                                <template x-for="(task, i) in formData.execution.checklist" :key="i">
+                                    <label class="flex items-center space-x-3 p-3 rounded-xl hover:bg-slate-50 cursor-pointer">
+                                        <input type="checkbox" x-model="task.done" class="w-5 h-5 rounded accent-brand-600">
+                                        <input type="text" x-model="task.label" class="flex-1 p-2 border rounded-lg text-sm" :class="task.done ? 'line-through text-slate-400' : ''">
+                                        <button @click.prevent="formData.execution.checklist.splice(i,1)" class="text-rose-500 hover:text-rose-700">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </label>
+                                </template>
+                            </div>
+                            <button @click="formData.execution.checklist.push({label:'', done:false})" class="text-sm font-bold text-brand-600 hover:text-brand-700">
+                                <i class="fas fa-plus mr-1"></i> Tambah Aksi
+                            </button>
+                        </div>
+
+                        <div class="flex justify-end">
+                            <button @click="saveData(); showToast('Roadmap disimpan!', 'success')" class="px-6 py-3 bg-emerald-600 text-white font-bold rounded-xl shadow-lg">Simpan Eksekusi</button>
+                        </div>
+                    </div>
+
+                    <!-- REPORT -->
+                    <div x-show="currentView === 'report'" class="space-y-6">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b pb-4 no-print">
+                            <div>
+                                <span class="text-xs font-bold text-brand-600 uppercase">Export & Ringkasan</span>
+                                <h2 class="text-2xl font-extrabold text-slate-900">Laporan Eksekutif Bisnis</h2>
+                            </div>
+                            <div class="flex flex-wrap gap-3">
+                                <button @click="window.print()" class="px-4 py-2.5 bg-slate-800 text-white rounded-xl text-sm font-bold hover:bg-slate-900 shadow-md">
+                                    <i class="fas fa-print mr-2"></i> Cetak / PDF
+                                </button>
+                                <button @click="exportJSON()" class="px-4 py-2.5 bg-brand-600 text-white rounded-xl text-sm font-bold hover:bg-brand-700 shadow-md">
+                                    <i class="fas fa-download mr-2"></i> Export JSON
+                                </button>
+                                <button @click="generateExecutiveSummary()" class="px-4 py-2.5 bg-gradient-to-r from-emerald-600 to-brand-600 text-white rounded-xl text-sm font-bold shadow-md">
+                                    <i class="fas fa-wand-magic-sparkles mr-2"></i> Resume AI
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-6 sm:p-10 rounded-3xl border border-slate-200 shadow-sm space-y-8">
+                            <div class="text-center border-b pb-8">
+                                <div class="inline-flex items-center px-3 py-1 bg-brand-50 text-brand-700 rounded-full text-xs font-semibold mb-4">
+                                    <i class="fas fa-file-alt mr-2"></i> Laporan Eksekutif
+                                </div>
+                                <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-2" x-text="formData.profile.businessName || 'Bisnis Tanpa Nama'"></h1>
+                                <p class="text-slate-500">
+                                    Sektor: <span class="font-semibold text-slate-700" x-text="formData.profile.industry || '-'"></span>
+                                    | Tipe: <span class="font-semibold text-slate-700" x-text="formData.profile.userType === 'new' ? 'Bisnis Baru' : 'Bisnis Berjalan'"></span>
+                                </p>
+                                <p class="text-xs text-slate-400 mt-3">Dibuat: <span x-text="new Date().toLocaleDateString('id-ID', {year:'numeric', month:'long', day:'numeric'})"></span></p>
+                            </div>
+
+                            <div x-show="formData.report.summary" class="bg-gradient-to-br from-brand-50 to-emerald-50 rounded-2xl p-6 border border-brand-100">
+                                <h2 class="text-lg font-bold text-brand-900 mb-3"><i class="fas fa-robot mr-2"></i> Ringkasan Eksekutif (AI)</h2>
+                                <p class="text-sm text-slate-700 leading-relaxed whitespace-pre-line" x-text="formData.report.summary"></p>
+                            </div>
+
+                            <div class="space-y-3">
+                                <h2 class="text-xl font-bold text-brand-600 border-b pb-2"><i class="fas fa-stethoscope mr-2"></i> 1. Diagnosis & Analisis Pasar</h2>
+                                <div class="grid md:grid-cols-2 gap-4 text-sm">
+                                    <div class="bg-slate-50 p-4 rounded-xl">
+                                        <p class="font-bold text-slate-700 mb-1">PESTEL — Political/Economic</p>
+                                        <p class="text-slate-600" x-text="formData.diagnosis.pestel.political || 'Belum diisi'"></p>
+                                    </div>
+                                    <div class="bg-slate-50 p-4 rounded-xl">
+                                        <p class="font-bold text-slate-700 mb-1">PESTEL — Social/Cultural</p>
+                                        <p class="text-slate-600" x-text="formData.diagnosis.pestel.social || 'Belum diisi'"></p>
+                                    </div>
+                                    <div class="bg-slate-50 p-4 rounded-xl">
+                                        <p class="font-bold text-slate-700 mb-1">PESTEL — Technological</p>
+                                        <p class="text-slate-600" x-text="formData.diagnosis.pestel.tech || 'Belum diisi'"></p>
+                                    </div>
+                                    <div class="bg-slate-50 p-4 rounded-xl">
+                                        <p class="font-bold text-slate-700 mb-1">PESTEL — Legal</p>
+                                        <p class="text-slate-600" x-text="formData.diagnosis.pestel.legal || 'Belum diisi'"></p>
+                                    </div>
+                                </div>
+                                <div class="bg-slate-50 p-4 rounded-xl text-sm">
+                                    <p class="font-bold text-slate-700 mb-1">Celah Pasar & USP</p>
+                                    <p class="text-slate-600" x-text="formData.diagnosis.competitorGap || 'Belum diisi'"></p>
+                                </div>
+                            </div>
+
+                            <div class="space-y-3">
+                                <h2 class="text-xl font-bold text-brand-600 border-b pb-2"><i class="fas fa-chess mr-2"></i> 2. Strategi & Model Bisnis</h2>
+                                <div class="bg-slate-50 p-4 rounded-xl text-sm">
+                                    <p class="font-bold text-slate-700 mb-1">Positioning Statement</p>
+                                    <p class="text-slate-600 italic" x-text="formData.strategy.stp.statement || 'Belum diisi'"></p>
+                                </div>
+                                <div class="grid md:grid-cols-2 gap-4 text-sm">
+                                    <div class="bg-slate-50 p-4 rounded-xl">
+                                        <p class="font-bold text-slate-700 mb-1">Value Proposition</p>
+                                        <p class="text-slate-600" x-text="formData.strategy.bmc.value || 'Belum diisi'"></p>
+                                    </div>
+                                    <div class="bg-slate-50 p-4 rounded-xl">
+                                        <p class="font-bold text-slate-700 mb-1">Target Segment</p>
+                                        <p class="text-slate-600" x-text="formData.strategy.bmc.segments || 'Belum diisi'"></p>
+                                    </div>
+                                    <div class="bg-slate-50 p-4 rounded-xl">
+                                        <p class="font-bold text-slate-700 mb-1">Key Activities</p>
+                                        <p class="text-slate-600" x-text="formData.strategy.bmc.activities || 'Belum diisi'"></p>
+                                    </div>
+                                    <div class="bg-slate-50 p-4 rounded-xl">
+                                        <p class="font-bold text-slate-700 mb-1">Revenue Streams</p>
+                                        <p class="text-slate-600" x-text="formData.strategy.bmc.revenue || 'Belum diisi'"></p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="space-y-3">
+                                <h2 class="text-xl font-bold text-brand-600 border-b pb-2"><i class="fas fa-palette mr-2"></i> 3. Brand Identity</h2>
+                                <div class="grid md:grid-cols-2 gap-4 text-sm">
+                                    <div class="bg-slate-50 p-4 rounded-xl">
+                                        <p class="font-bold text-slate-700 mb-1">Tagline</p>
+                                        <p class="text-slate-600 italic" x-text="formData.branding.tagline || 'Belum diisi'"></p>
+                                    </div>
+                                    <div class="bg-slate-50 p-4 rounded-xl">
+                                        <p class="font-bold text-slate-700 mb-1">Brand Voice & Personality</p>
+                                        <p class="text-slate-600" x-text="formData.branding.voice || 'Belum diisi'"></p>
+                                    </div>
+                                </div>
+                                <div class="bg-slate-50 p-4 rounded-xl text-sm">
+                                    <p class="font-bold text-slate-700 mb-2">Palet Warna</p>
+                                    <div class="flex gap-2">
+                                        <template x-for="(c, i) in formData.branding.colors" :key="i">
+                                            <div class="w-10 h-10 rounded-lg shadow-sm" :style="`background: ${c}`"></div>
                                         </template>
                                     </div>
                                 </div>
+                                <div class="bg-slate-50 p-4 rounded-xl text-sm">
+                                    <p class="font-bold text-slate-700 mb-1">Top 3 Rekomendasi Produk</p>
+                                    <ol class="list-decimal list-inside text-slate-600 space-y-1">
+                                        <template x-for="(p, i) in formData.branding.products" :key="i">
+                                            <li x-show="p.name">
+                                                <span class="font-semibold" x-text="p.name"></span>
+                                                <span class="text-xs text-emerald-600 ml-2" x-show="p.score" x-text="`(Skor: ${p.score}/10)`"></span>
+                                            </li>
+                                        </template>
+                                    </ol>
+                                </div>
+                            </div>
 
-                                <!-- Footer -->
-                                <div class="text-center text-xs text-slate-400 pt-8 border-t">
-                                    <p>Laporan dibuat oleh BizMentor AI — Platform Konsultan Bisnis Digital</p>
-                                    <p>Gemini AI & Grok AI Engine</p>
+                            <div class="space-y-3">
+                                <h2 class="text-xl font-bold text-brand-600 border-b pb-2"><i class="fas fa-calculator mr-2"></i> 4. Perencanaan Finansial</h2>
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+                                    <div class="bg-slate-50 p-4 rounded-xl">
+                                        <p class="text-xs font-bold text-slate-500 uppercase">CAC</p>
+                                        <p class="font-bold text-slate-800 text-lg" x-text="formData.financial.cac || '-'"></p>
+                                    </div>
+                                    <div class="bg-slate-50 p-4 rounded-xl">
+                                        <p class="text-xs font-bold text-slate-500 uppercase">LTV</p>
+                                        <p class="font-bold text-slate-800 text-lg" x-text="formData.financial.ltv || '-'"></p>
+                                    </div>
+                                    <div class="bg-slate-50 p-4 rounded-xl">
+                                        <p class="text-xs font-bold text-slate-500 uppercase">Margin</p>
+                                        <p class="font-bold text-slate-800 text-lg" x-text="formData.financial.margin || '-'"></p>
+                                    </div>
+                                    <div class="bg-slate-50 p-4 rounded-xl">
+                                        <p class="text-xs font-bold text-slate-500 uppercase">BEP</p>
+                                        <p class="font-bold text-slate-800 text-lg" x-text="formData.financial.bep || '-'"></p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="space-y-3">
+                                <h2 class="text-xl font-bold text-brand-600 border-b pb-2"><i class="fas fa-rocket mr-2"></i> 5. Roadmap Eksekusi</h2>
+                                <div class="space-y-2 text-sm">
+                                    <template x-for="(item, i) in formData.execution.roadmap" :key="i">
+                                        <div x-show="item.title" class="flex items-center space-x-3 bg-slate-50 p-3 rounded-xl">
+                                            <span class="w-8 h-8 rounded-lg bg-brand-100 text-brand-700 flex items-center justify-center text-xs font-bold shrink-0" x-text="`Q${item.quarter || 1}`"></span>
+                                            <span class="text-slate-700" x-text="item.title"></span>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
+
+                            <div class="text-center text-xs text-slate-400 pt-8 border-t">
+                                <p>Laporan dibuat oleh BizMentor AI — Platform Konsultan Bisnis Digital</p>
+                                <p>Gemini AI & Grok AI Engine</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SETTINGS -->
+                    <div x-show="currentView === 'settings'" class="space-y-6">
+                        <div class="border-b pb-4">
+                            <span class="text-xs font-bold text-brand-600 uppercase">Konfigurasi</span>
+                            <h2 class="text-2xl font-extrabold text-slate-900">Pengaturan API Key & Mesin AI</h2>
+                        </div>
+
+                        <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6 max-w-2xl">
+                            <div class="bg-amber-50 border border-amber-200 rounded-2xl p-4 text-xs text-amber-800 leading-relaxed">
+                                <i class="fas fa-shield-alt text-amber-600 mr-1 text-base"></i>
+                                <strong>Area Pengembang:</strong> Masukkan API Key Gemini atau Grok di sini. Kunci disimpan secara lokal di browser Anda (<code class="bg-amber-100 px-1 rounded">localStorage</code>). Jika dikosongkan, aplikasi berjalan dalam <strong>mode demo (mock AI)</strong>.
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-1">Gemini API Key <span class="text-xs font-normal text-slate-400">(Google)</span></label>
+                                <div class="relative">
+                                    <input :type="showGeminiKey ? 'text' : 'password'" x-model="settings.geminiKey" class="w-full pl-4 pr-12 py-3 rounded-xl border border-slate-300 font-mono text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none" placeholder="AIzaSy...">
+                                    <button type="button" @click="showGeminiKey = !showGeminiKey" class="absolute right-3 top-3.5 text-slate-400 hover:text-slate-600">
+                                        <i class="fas" :class="showGeminiKey ? 'fa-eye-slash' : 'fa-eye'"></i>
+                                    </button>
+                                </div>
+                                <div class="flex justify-between items-center mt-2">
+                                    <p class="text-xs text-slate-400">Dapatkan di: <a href="https://aistudio.google.com/apikey" target="_blank" class="text-brand-600 hover:underline">Google AI Studio</a></p>
+                                    <button @click="testAPIKey('gemini')" class="text-xs font-bold text-brand-600 hover:text-brand-700" :disabled="!settings.geminiKey">
+                                        <i class="fas fa-vial mr-1"></i> Test Koneksi
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-1">Grok API Key <span class="text-xs font-normal text-slate-400">(xAI)</span></label>
+                                <div class="relative">
+                                    <input :type="showGrokKey ? 'text' : 'password'" x-model="settings.grokKey" class="w-full pl-4 pr-12 py-3 rounded-xl border border-slate-300 font-mono text-sm focus:ring-2 focus:ring-brand-500 focus:outline-none" placeholder="xai-...">
+                                    <button type="button" @click="showGrokKey = !showGrokKey" class="absolute right-3 top-3.5 text-slate-400 hover:text-slate-600">
+                                        <i class="fas" :class="showGrokKey ? 'fa-eye-slash' : 'fa-eye'"></i>
+                                    </button>
+                                </div>
+                                <div class="flex justify-between items-center mt-2">
+                                    <p class="text-xs text-slate-400">Dapatkan di: <a href="https://x.ai/api" target="_blank" class="text-brand-600 hover:underline">xAI Console</a></p>
+                                    <button @click="testAPIKey('grok')" class="text-xs font-bold text-brand-600 hover:text-brand-700" :disabled="!settings.grokKey">
+                                        <i class="fas fa-vial mr-1"></i> Test Koneksi
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-bold text-slate-700 mb-1">Default AI Provider</label>
+                                <select x-model="settings.defaultProvider" class="w-full p-3 border rounded-xl text-sm bg-white focus:ring-2 focus:ring-brand-500 focus:outline-none">
+                                    <option value="gemini">Google Gemini AI</option>
+                                    <option value="grok">xAI Grok</option>
+                                </select>
+                                <p class="text-xs text-slate-400 mt-1">
+                                    Mode: <span class="font-bold" x-text="((settings.defaultProvider === 'gemini' && settings.geminiKey) || (settings.defaultProvider === 'grok' && settings.grokKey)) ? 'Live AI' : 'Mock AI (Demo)'"></span>
+                                </p>
+                            </div>
+
+                            <div class="bg-rose-50 border border-rose-200 rounded-2xl p-4 text-xs text-rose-800 leading-relaxed">
+                                <i class="fas fa-exclamation-triangle text-rose-600 mr-1"></i>
+                                <strong>Perhatian Privasi Grok:</strong> Jika Anda mengaktifkan kredit data sharing dari xAI, semua interaksi akan dibagikan permanen untuk pelatihan model dan tidak dapat ditarik kembali.
+                            </div>
+
+                            <div class="flex flex-col sm:flex-row justify-between gap-3 pt-4 border-t">
+                                <button @click="resetData()" class="px-6 py-3 bg-rose-50 text-rose-600 font-bold rounded-xl hover:bg-rose-100 transition">
+                                    <i class="fas fa-trash mr-2"></i> Reset Semua Data
+                                </button>
+                                <div class="flex gap-3">
+                                    <button @click="exportJSON()" class="px-6 py-3 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200 transition">
+                                        <i class="fas fa-download mr-2"></i> Backup
+                                    </button>
+                                    <button @click="saveSettings()" class="px-6 py-3 bg-brand-600 text-white font-bold rounded-xl shadow-lg hover:bg-brand-700 transition">
+                                        <i class="fas fa-save mr-2"></i> Simpan
+                                    </button>
                                 </div>
                             </div>
                         </div>
-                        
+                    </div>
+
+                </div>
+            </main>
+        </div>
+    </div>
+</template>
+
+<!-- ALPINE APP -->
+<script>
+function bizMentorApp() {
+    return {
+        currentView: 'landing',
+        sidebarOpen: false,
+        onboardingStep: 1,
+        showGeminiKey: false,
+        showGrokKey: false,
+        toasts: [],
+        aiLoading: false,
+        aiLoadingMessage: 'Menganalisis data bisnis Anda...',
+
+        industries: ['F&B / Kuliner','Retail & E-commerce','Jasa Profesional','Teknologi & SaaS','Kesehatan & Wellness','Pendidikan & Kursus','Fashion & Lifestyle','Manufaktur & Agrikultur','Kreatif & Media','Logistik & Transportasi'],
+
+        settings: { geminiKey: '', grokKey: '', defaultProvider: 'gemini' },
+
+        formData: {
+            profile: { userType: '', industry: '', businessName: '' },
+            diagnosis: {
+                pestel: { political: '', social: '', tech: '', environment: '', legal: '' },
+                competitors: [{ name: '', price: '', strength: '', weakness: '' }],
+                competitorGap: '',
+                empathy: { says: '', thinks: '', does: '', feels: '', interview: '' }
+            },
+            strategy: {
+                stp: { segmenting: '', targeting: '', positioning: '', statement: '' },
+                vpc: { products: '', painRelievers: '', gainCreators: '', jobs: '', pains: '', gains: '' },
+                bmc: { partners: '', activities: '', value: '', relationships: '', segments: '', resources: '', channels: '', costs: '', revenue: '' },
+                swot: { strengths: '', weaknesses: '', opportunities: '', threats: '' },
+                soar: { strengths: '', opportunities: '', aspirations: '', results: '' },
+                bcg: { star: '', cashCow: '', question: '', dog: '' },
+                ansoff: { penetration: '', marketDev: '', productDev: '', diversification: '' },
+                kano: { mustBe: '', performance: '', attractive: '' }
+            },
+            branding: {
+                products: [
+                    { name: '', score: 8, reason: '' },
+                    { name: '', score: 8, reason: '' },
+                    { name: '', score: 8, reason: '' }
+                ],
+                purpose: '', personality: '', voice: '', tagline: '',
+                colors: ['#2563eb', '#10b981', '#0f172a', '#f59e0b'],
+                font: 'Plus Jakarta Sans', logo: ''
+            },
+            financial: {
+                cac: '', ltv: '', margin: '', bep: '',
+                pl: { rev1: '', rev2: '', rev3: '', cost1: '', cost2: '', cost3: '', profit1: '', profit2: '', profit3: '' },
+                risks: [{ name: '', level: 'Medium', mitigation: '' }],
+                assumptions: ''
+            },
+            execution: {
+                roadmap: [{ title: '', quarter: 1 }],
+                kpi: { phase1: '', phase2: '', phase3: '', phase4: '' },
+                checklist: [{ label: '', done: false }]
+            },
+            report: { summary: '', generatedAt: '' }
+        },
+
+        get navItems() {
+            return [
+                { id: 'dashboard', label: 'Dashboard', icon: 'fas fa-home', status: this.getStatus('dashboard') },
+                { id: 'diagnosis', label: 'Diagnosis', icon: 'fas fa-stethoscope', status: this.getStatus('diagnosis') },
+                { id: 'strategi', label: 'Strategi', icon: 'fas fa-chess', status: this.getStatus('strategi') },
+                { id: 'branding', label: 'Produk & Branding', icon: 'fas fa-palette', status: this.getStatus('branding') },
+                { id: 'perencanaan', label: 'Perencanaan', icon: 'fas fa-calculator', status: this.getStatus('perencanaan') },
+                { id: 'eksekusi', label: 'Eksekusi', icon: 'fas fa-rocket', status: this.getStatus('eksekusi') },
+                { id: 'report', label: 'Report & Export', icon: 'fas fa-file-alt', status: 'not-started' },
+                { id: 'settings', label: 'Pengaturan', icon: 'fas fa-cog', status: 'not-started' }
+            ];
+        },
+
+        get bmcBlocks() {
+            return [
+                { key: 'partners', label: 'Key Partners', ph: 'Supplier, vendor...' },
+                { key: 'activities', label: 'Key Activities', ph: 'Produksi, marketing...' },
+                { key: 'value', label: 'Value Propositions', ph: 'Keunggulan unik...' },
+                { key: 'relationships', label: 'Customer Relationships', ph: 'Loyalty program...' },
+                { key: 'segments', label: 'Customer Segments', ph: 'Target market...' },
+                { key: 'resources', label: 'Key Resources', ph: 'Tim, aset, paten...' },
+                { key: 'channels', label: 'Channels', ph: 'Sosmed, marketplace...' },
+                { key: 'costs', label: 'Cost Structure', ph: 'Gaji, bahan baku...' },
+                { key: 'revenue', label: 'Revenue Streams', ph: 'Penjualan, subscription...' }
+            ];
+        },
+
+        get phasesList() {
+            return [
+                { id: 'diagnosis', title: 'Diagnosis', desc: 'PESTEL, kompetitor, empathy', route: 'diagnosis', completed: this.isPhaseComplete('diagnosis') },
+                { id: 'strategi', title: 'Strategi', desc: 'STP, VPC, BMC, SWOT/SOAR', route: 'strategi', completed: this.isPhaseComplete('strategi') },
+                { id: 'branding', title: 'Branding', desc: 'Identitas & portofolio produk', route: 'branding', completed: this.isPhaseComplete('branding') },
+                { id: 'perencanaan', title: 'Finansial', desc: 'Unit economics & P&L', route: 'perencanaan', completed: this.isPhaseComplete('perencanaan') },
+                { id: 'eksekusi', title: 'Eksekusi', desc: 'Roadmap & KPI 12 bulan', route: 'eksekusi', completed: this.isPhaseComplete('eksekusi') }
+            ];
+        },
+
+        init() {
+            const hash = window.location.hash.replace('#/', '');
+            const savedProfile = localStorage.getItem('bizmentor_profile');
+            const savedSettings = localStorage.getItem('bizmentor_settings');
+            const savedData = localStorage.getItem('bizmentor_data');
+
+            if (savedSettings) { try { this.settings = { ...this.settings, ...JSON.parse(savedSettings) }; } catch (e) {} }
+            if (savedData) { try { this.formData = this.deepMerge(this.formData, JSON.parse(savedData)); } catch (e) {} }
+            if (savedProfile) {
+                this.formData.profile = JSON.parse(savedProfile);
+                this.currentView = hash || 'dashboard';
+            } else {
+                this.currentView = 'landing';
+            }
+
+            window.addEventListener('hashchange', () => {
+                const newHash = window.location.hash.replace('#/', '');
+                if (newHash) this.currentView = newHash;
+            });
+        },
+
+        deepMerge(target, source) {
+            const out = { ...target };
+            for (const key in source) {
+                if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+                    out[key] = this.deepMerge(target[key] || {}, source[key]);
+                } else {
+                    out[key] = source[key];
+                }
+            }
+            return out;
+        },
+
+        goTo(view) {
+            this.currentView = view;
+            window.location.hash = `#/${view}`;
+            window.scrollTo(0, 0);
+        },
+
+        getCurrentViewTitle() {
+            const titles = {
+                dashboard: 'Dashboard Utama',
+                diagnosis: 'Diagnosis & Analisis Pasar',
+                strategi: 'Strategi & Model Bisnis',
+                branding: 'Produk & Brand Identity',
+                perencanaan: 'Perencanaan Finansial',
+                eksekusi: 'Eksekusi & Roadmap',
+                report: 'Laporan Eksekutif',
+                settings: 'Pengaturan Sistem'
+            };
+            return titles[this.currentView] || 'BizMentor AI';
+        },
+
+        getPhaseLabel(view) {
+            const labels = { diagnosis: 'Diagnosis', strategi: 'Strategi', branding: 'Branding', perencanaan: 'Finansial', eksekusi: 'Eksekusi' };
+            return labels[view] || 'Dashboard';
+        },
+
+        getNextRecommendedPhase() {
+            if (!this.isPhaseComplete('diagnosis')) return 'diagnosis';
+            if (!this.isPhaseComplete('strategi')) return 'strategi';
+            if (!this.isPhaseComplete('branding')) return 'branding';
+            if (!this.isPhaseComplete('perencanaan')) return 'perencanaan';
+            if (!this.isPhaseComplete('eksekusi')) return 'eksekusi';
+            return 'report';
+        },
+
+        isPhaseComplete(phase) {
+            const d = this.formData;
+            switch (phase) {
+                case 'diagnosis': return !!(d.diagnosis.pestel.political && d.diagnosis.pestel.social);
+                case 'strategi': return !!(d.strategy.bmc.value && d.strategy.stp.statement);
+                case 'branding': return !!(d.branding.tagline && d.branding.voice);
+                case 'perencanaan': return !!(d.financial.cac && d.financial.bep);
+                case 'eksekusi': return d.execution.roadmap.some(r => r.title);
+                default: return false;
+            }
+        },
+
+        getStatus(view) {
+            if (view === 'dashboard' || view === 'settings' || view === 'report') return 'not-started';
+            if (this.isPhaseComplete(view)) return 'completed';
+            return 'not-started';
+        },
+
+        getGlobalProgress() {
+            const phases = ['diagnosis', 'strategi', 'branding', 'perencanaan', 'eksekusi'];
+            const done = phases.filter(p => this.isPhaseComplete(p)).length;
+            return Math.round((done / phases.length) * 100);
+        },
+
+        getRecentActivity() {
+            const acts = [];
+            const d = this.formData;
+            if (d.diagnosis.pestel.political) acts.push({ label: 'Mengisi PESTEL Analysis', icon: 'fas fa-globe', time: 'Baru saja' });
+            if (d.strategy.stp.statement) acts.push({ label: 'Menyusun STP', icon: 'fas fa-bullseye', time: 'Baru saja' });
+            if (d.strategy.bmc.value) acts.push({ label: 'Mengisi Business Model Canvas', icon: 'fas fa-th-large', time: 'Baru saja' });
+            if (d.branding.tagline) acts.push({ label: 'Membuat Brand Identity', icon: 'fas fa-palette', time: 'Baru saja' });
+            if (d.financial.bep) acts.push({ label: 'Menghitung Unit Economics', icon: 'fas fa-calculator', time: 'Baru saja' });
+            return acts.slice(0, 5);
+        },
+
+        nextOnboarding(step, condition, msg) {
+            if (condition) this.onboardingStep++;
+            else this.showToast(msg, 'warning');
+        },
+
+        finishOnboarding() {
+            localStorage.setItem('bizmentor_profile', JSON.stringify(this.formData.profile));
+            this.saveSettings();
+            this.saveData();
+            this.goTo('dashboard');
+            this.showToast('Onboarding selesai! Selamat datang.', 'success');
+        },
+
+        saveData() { localStorage.setItem('bizmentor_data', JSON.stringify(this.formData)); },
+        saveSettings() {
+            localStorage.setItem('bizmentor_settings', JSON.stringify(this.settings));
+            this.showToast('Pengaturan disimpan!', 'success');
+        },
+
+        resetData() {
+            if (confirm('Yakin ingin mereset seluruh data bisnis? Tindakan ini tidak bisa dibatalkan.')) {
+                localStorage.clear();
+                window.location.hash = '';
+                location.reload();
+            }
+        },
+
+        exportJSON() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({
+                profile: this.formData.profile, diagnosis: this.formData.diagnosis,
+                strategy: this.formData.strategy, branding: this.formData.branding,
+                financial: this.formData.financial, execution: this.formData.execution,
+                report: this.formData.report, exportedAt: new Date().toISOString()
+            }, null, 2));
+            const a = document.createElement('a');
+            a.setAttribute("href", dataStr);
+            a.setAttribute("download", `BizMentor_${this.formData.profile.businessName || 'Bisnis'}_${Date.now()}.json`);
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            this.showToast('File backup berhasil diunduh!', 'success');
+        },
+
+        addCompetitor() { this.formData.diagnosis.competitors.push({ name: '', price: '', strength: '', weakness: '' }); },
+
+        showToast(message, type = 'success') {
+            const id = Date.now() + Math.random();
+            this.toasts.push({ id, message, type });
+            setTimeout(() => { this.toasts = this.toasts.filter(t => t.id !== id); }, 4000);
+        },
+
+        async callAI(prompt, type) {
+            this.aiLoading = true;
+            this.aiLoadingMessage = `Menghasilkan ${type} dengan ${this.settings.defaultProvider.toUpperCase()}...`;
+            await new Promise(r => setTimeout(r, 1500));
+            const result = await MockAI.generate(type, this.formData, this.settings.defaultProvider);
+            this.aiLoading = false;
+            return result;
+        },
+
+        async generateAIContent(type) {
+            try {
+                const result = await this.callAI('', type);
+                this.applyAIResult(type, result);
+                this.saveData();
+                this.showToast(`Analisis ${type.toUpperCase()} berhasil diterapkan!`, 'success');
+            } catch (err) {
+                this.aiLoading = false;
+                this.showToast(`Gagal generate ${type}: ${err.message}`, 'error');
+            }
+        },
+
+        applyAIResult(type, result) {
+            const d = this.formData;
+            switch (type) {
+                case 'pestel': d.diagnosis.pestel = { ...d.diagnosis.pestel, ...result }; break;
+                case 'competitor':
+                    if (result.competitors) d.diagnosis.competitors = result.competitors;
+                    if (result.gap) d.diagnosis.competitorGap = result.gap;
+                    break;
+                case 'empathy': d.diagnosis.empathy = { ...d.diagnosis.empathy, ...result }; break;
+                case 'stp': d.strategy.stp = { ...d.strategy.stp, ...result }; break;
+                case 'vpc': d.strategy.vpc = { ...d.strategy.vpc, ...result }; break;
+                case 'bmc': d.strategy.bmc = { ...d.strategy.bmc, ...result }; break;
+                case 'swot': d.strategy.swot = { ...d.strategy.swot, ...result }; break;
+                case 'soar': d.strategy.soar = { ...d.strategy.soar, ...result }; break;
+                case 'portofolio':
+                    if (result.bcg) d.strategy.bcg = { ...d.strategy.bcg, ...result.bcg };
+                    if (result.ansoff) d.strategy.ansoff = { ...d.strategy.ansoff, ...result.ansoff };
+                    if (result.kano) d.strategy.kano = { ...d.strategy.kano, ...result.kano };
+                    break;
+                case 'branding':
+                    if (result.products) d.branding.products = result.products;
+                    if (result.tagline) d.branding.tagline = result.tagline;
+                    if (result.voice) d.branding.voice = result.voice;
+                    if (result.personality) d.branding.personality = result.personality;
+                    if (result.purpose) d.branding.purpose = result.purpose;
+                    if (result.colors) d.branding.colors = result.colors;
+                    if (result.font) d.branding.font = result.font;
+                    if (result.logo) d.branding.logo = result.logo;
+                    break;
+                case 'financial':
+                    if (result.cac) d.financial.cac = result.cac;
+                    if (result.ltv) d.financial.ltv = result.ltv;
+                    if (result.margin) d.financial.margin = result.margin;
+                    if (result.bep) d.financial.bep = result.bep;
+                    if (result.assumptions) d.financial.assumptions = result.assumptions;
+                    break;
+                case 'execution':
+                    if (result.roadmap) d.execution.roadmap = result.roadmap;
+                    if (result.kpi) d.execution.kpi = { ...d.execution.kpi, ...result.kpi };
+                    if (result.checklist) d.execution.checklist = result.checklist;
+                    break;
+            }
+        },
+
+        async runAIGeneratorGlobal() {
+            const phase = this.getNextRecommendedPhase();
+            const map = { diagnosis: 'pestel', strategi: 'bmc', branding: 'branding', perencanaan: 'financial', eksekusi: 'execution', report: 'report' };
+            if (phase === 'report') await this.generateExecutiveSummary();
+            else await this.generateAIContent(map[phase]);
+        },
+
+        async generateExecutiveSummary() {
+            this.aiLoading = true;
+            this.aiLoadingMessage = 'Menyusun ringkasan eksekutif...';
+            await new Promise(r => setTimeout(r, 1800));
+            this.formData.report.summary = MockAI.generateSummary(this.formData);
+            this.formData.report.generatedAt = new Date().toISOString();
+            this.aiLoading = false;
+            this.saveData();
+            this.showToast('Ringkasan eksekutif berhasil dibuat!', 'success');
+        },
+
+        async testAPIKey(provider) {
+            const key = provider === 'gemini' ? this.settings.geminiKey : this.settings.grokKey;
+            if (!key) { this.showToast('API Key kosong!', 'warning'); return; }
+            this.showToast(`Testing ${provider.toUpperCase()} API Key...`, 'info');
+            setTimeout(() => { this.showToast('Mode Mock aktif. Ganti dengan real API test di production.', 'info'); }, 1200);
+        },
+
+        loadDemoData() {
+            this.formData.profile = { userType: 'existing', industry: 'F&B / Kuliner', businessName: 'Kopi Senja Nusantara' };
+            this.formData.diagnosis.pestel = {
+                political: 'Daya beli kelas menengah stabil, inflasi bahan baku kopi 3-5%.',
+                social: 'Tren nongkrong dan work from cafe meningkat di Gen Z.',
+                tech: 'Adopsi POS cloud dan QRIS mencapai 95% di area urban.',
+                environment: 'Kesadaran konsumen akan kemasan ramah lingkungan naik.',
+                legal: 'Izin PIRT, BPOM, dan sertifikasi halal wajib dipenuhi.'
+            };
+            this.formData.diagnosis.competitors = [
+                { name: 'Kopi Kenangan', price: 'Rp 22.000', strength: 'Jaringan luas', weakness: 'Rasa standar' },
+                { name: 'Janji Jiwa', price: 'Rp 20.000', strength: 'Brand lokal kuat', weakness: 'Kurang inovasi' }
+            ];
+            this.formData.diagnosis.competitorGap = 'Kopi specialty lokal dengan harga menengah & pengalaman kedai tematik.';
+            this.formData.diagnosis.empathy = {
+                says: 'Butuh tempat nyaman untuk kerja sambil ngopi.',
+                thinks: 'Kopi enak biasanya mahal.',
+                does: 'Cari wifi cepat & colokan listrik.',
+                feels: 'Ingin produktif tapi tetap santai.',
+                interview: 'Wawancara 20 pekerja remote: 85% ingin coffee shop dengan wifi cepat dan suasana tenang.'
+            };
+            this.formData.strategy.stp = {
+                segmenting: 'Pekerja remote, mahasiswa, freelancer di area urban.',
+                targeting: 'Usia 22-35 tahun, middle income, melek digital.',
+                positioning: 'Coffee shop specialty dengan harga terjangkau dan suasana kerja.',
+                statement: 'Untuk pekerja remote yang butuh ruang kerja nyaman, Kopi Senja adalah coffee shop specialty yang menyediakan wifi cepat, colokan lengkap, dan kopi lokal berkualitas dengan harga Rp20-30 ribu.'
+            };
+            this.formData.strategy.vpc = {
+                products: 'Kopi specialty, pastry, workspace.',
+                painRelievers: 'Wifi cepat, colokan, suasana tenang.',
+                gainCreators: 'Loyalty app, promo jam kerja, komunitas.',
+                jobs: 'Bekerja produktif sambil ngopi.',
+                pains: 'Cafe berisik, wifi lemot, harga mahal.',
+                gains: 'Produktif, hemat, dapat komunitas.'
+            };
+            this.formData.strategy.bmc = {
+                partners: 'Supplier biji kopi lokal, GoFood/GrabFood',
+                activities: 'Seduh kopi, digital marketing, community event',
+                value: 'Kopi specialty lokal dengan workspace nyaman',
+                relationships: 'Loyalty app, member card, komunitas',
+                segments: 'Pekerja remote, mahasiswa, freelancer',
+                resources: 'Barista terlatih, mesin espresso, ruang kerja',
+                channels: 'Kedai fisik, aplikasi ojol, Instagram',
+                costs: 'Sewa, gaji, bahan baku, marketing',
+                revenue: 'Penjualan kopi, pastry, merchandise, event'
+            };
+            this.formData.strategy.swot = {
+                strengths: 'Lokasi strategis, barista berpengalaman, brand lokal.',
+                weaknesses: 'Modal terbatas, brand awareness rendah.',
+                opportunities: 'Tren WFC, dukungan UMKM pemerintah.',
+                threats: 'Persaingan franchise besar, kenaikan harga bahan.'
+            };
+            this.formData.strategy.soar = {
+                strengths: 'Barista ahli, lokasi strategis.',
+                opportunities: 'Tren kerja remote & komunitas.',
+                aspirations: 'Menjadi coffee shop #1 untuk pekerja remote di kotanya.',
+                results: '500 member loyalty dalam 6 bulan.'
+            };
+            this.formData.strategy.bcg = { star: 'Kopi Susu Senja', cashCow: 'Kopi Tubruk', question: 'Manual Brew', dog: 'Merchandise lama' };
+            this.formData.branding = {
+                products: [
+                    { name: 'Kopi Susu Senja', score: 9, reason: 'Margin tinggi & repeat order.' },
+                    { name: 'Croissant Butter', score: 8, reason: 'Pelengkap & margin bagus.' },
+                    { name: 'Manual Brew Arabika', score: 7, reason: 'Diferensiasi premium.' }
+                ],
+                purpose: 'Membuat ruang kerja produktif terasa seperti rumah.',
+                personality: 'Hangat, ramah, tepercaya',
+                voice: 'Santai tapi informatif',
+                tagline: 'Secangkir Inspirasi Setiap Hari',
+                colors: ['#7c2d12', '#f59e0b', '#fef3c7', '#0f172a'],
+                font: 'Plus Jakarta Sans',
+                logo: 'Konsep: cangkir kopi dengan sinar senja, minimalis, mudah dikenali.'
+            };
+            this.formData.financial = {
+                cac: 'Rp 15.000', ltv: 'Rp 350.000', margin: '35%', bep: '400 cup/bulan',
+                pl: {
+                    rev1: 'Rp 30 juta', rev2: 'Rp 45 juta', rev3: 'Rp 75 juta',
+                    cost1: 'Rp 22 juta', cost2: 'Rp 30 juta', cost3: 'Rp 45 juta',
+                    profit1: 'Rp 8 juta', profit2: 'Rp 15 juta', profit3: 'Rp 30 juta'
+                },
+                risks: [
+                    { name: 'Kenaikan harga bahan baku', level: 'High', mitigation: 'Kontrak supplier jangka panjang' },
+                    { name: 'Persaingan franchise', level: 'Medium', mitigation: 'Diferensiasi pengalaman & komunitas' }
+                ],
+                assumptions: 'Traffic minimum 30 cup/hari, harga bahan stabil, tidak ada kenaikan sewa >10%.'
+            };
+            this.formData.execution = {
+                roadmap: [
+                    { title: 'Renovasi outlet & uji menu', quarter: 1 },
+                    { title: 'Grand opening & promo influencer', quarter: 2 },
+                    { title: 'Launch loyalty app & komunitas', quarter: 3 },
+                    { title: 'Ekspansi cabang kedua', quarter: 4 }
+                ],
+                kpi: {
+                    phase1: '30 cup/hari, 100 follower sosmed',
+                    phase2: '80 cup/hari, 300 member loyalty',
+                    phase3: '120 cup/hari, 1000 member, NPS 8+',
+                    phase4: 'Buka cabang 2, profit 30%'
+                },
+                checklist: [
+                    { label: 'Wawancara 20 calon pelanggan', done: true },
+                    { label: 'Riset supplier biji kopi', done: true },
+                    { label: 'Buat MVP menu (5 item)', done: false },
+                    { label: 'Setup akun GoFood/GrabFood', done: false }
+                ]
+            };
+            localStorage.setItem('bizmentor_profile', JSON.stringify(this.formData.profile));
+            this.saveData();
+            this.goTo('dashboard');
+            this.showToast('Data contoh (demo) berhasil dimuat!', 'success');
+        }
+    };
+}
+</script>
+
+<!-- MOCK AI ENGINE -->
+<script>
+const MockAI = {
+    async generate(type, formData, provider) {
+        const industry = formData.profile.industry || 'bisnis Anda';
+        const name = formData.profile.businessName || 'Bisnis Anda';
+        const generators = {
+            pestel: () => ({
+                political: `[${provider.toUpperCase()} Mock] Untuk industri ${industry}: Stabilitas politik mendukung, namun perlu perhatikan perubahan regulasi pajak UMKM dan insentif pemerintah.`,
+                social: `Tren konsumen ${industry} bergeser ke arah personalisasi, keberlanjutan, dan pengalaman digital-first. Gen Z & Milenial mendominasi pasar.`,
+                tech: `Adopsi teknologi cloud POS, AI customer service, dan analytics berbasis data meningkat pesat. Otomasi jadi kunci efisiensi.`,
+                environment: `Konsumen semakin peduli pada jejak karbon dan kemasan ramah lingkungan. Sertifikasi green business jadi nilai tambah.`,
+                legal: `Pastikan kepatuhan pada OSS RBA, sertifikasi halal (jika F&B), HKI untuk brand, dan perlindungan data pelanggan.`
+            }),
+            competitor: () => ({
+                competitors: [
+                    { name: 'Kompetitor A', price: 'Rp 25.000', strength: 'Brand mapan & jaringan luas', weakness: 'Kurang personalisasi' },
+                    { name: 'Kompetitor B', price: 'Rp 18.000', strength: 'Harga kompetitif', weakness: 'Kualitas tidak konsisten' },
+                    { name: 'Kompetitor C', price: 'Rp 30.000', strength: 'Pengalaman premium', weakness: 'Terlalu mahal untuk mass market' }
+                ],
+                gap: `Celah pasar untuk ${name}: segmen middle market yang menginginkan kualitas premium dengan harga terjangkau, plus pengalaman personal yang belum digarap kompetitor.`
+            }),
+            empathy: () => ({
+                says: `"Saya butuh solusi ${industry} yang praktis, terpercaya, dan tidak menguras waktu."`,
+                thinks: `"Apakah ini benar-benar akan menyelesaikan masalah saya, atau hanya menghabiskan uang?"`,
+                does: `Mencari review, membandingkan harga, dan mencoba trial sebelum commit.`,
+                feels: `Cemas kalau salah pilih, tapi antusias kalau menemukan yang tepat.`,
+                interview: `Hasil wawancara 15 calon pelanggan: 80% mengeluhkan [pain utama], 65% pernah mencoba solusi lain dan kecewa, 90% bersedia bayar lebih untuk [solusi spesifik].`
+            }),
+            stp: () => ({
+                segmenting: `Pasar ${industry} terbagi menjadi: (1) Segmen mass market sensitif harga, (2) Segmen middle market cari value, (3) Segmen premium cari pengalaman eksklusif.`,
+                targeting: `Target utama: segmen middle market usia 25-40 tahun, urban, middle income, melek digital, mengutamakan kualitas.`,
+                positioning: `Posisikan ${name} sebagai solusi ${industry} yang menggabungkan kualitas premium dengan harga terjangkau dan pengalaman personal.`,
+                statement: `Untuk profesional urban yang menginginkan ${industry} berkualitas tanpa harga premium, ${name} adalah pilihan yang menyediakan kualitas terbaik dengan harga terjangkau dan layanan personal.`
+            }),
+            vpc: () => ({
+                products: `Produk utama: [produk flagship], pelengkap: [produk pendukung], layanan: [layanan nilai tambah].`,
+                painRelievers: `Mengurangi frustrasi pelanggan dengan proses cepat, transparan, dan andal.`,
+                gainCreators: `Memberikan pengalaman premium, loyalitas reward, dan komunitas eksklusif.`,
+                jobs: `Pelanggan ingin menyelesaikan [tugas utama] dengan cepat, murah, dan tanpa drama.`,
+                pains: `Harga tidak transparan, kualitas tidak konsisten, layanan lambat.`,
+                gains: `Kualitas konsisten, harga wajar, pengalaman menyenangkan, komunitas.`
+            }),
+            bmc: () => ({
+                partners: `Supplier bahan baku lokal, platform digital (marketplace/ojol), komunitas & influencer.`,
+                activities: `Produksi/seduh, quality control, digital marketing, customer service, community building.`,
+                value: `${name} menawarkan kualitas premium dengan harga middle market, plus pengalaman personal yang jarang ditemukan di industri ${industry}.`,
+                relationships: `Loyalty program, komunitas member, customer service responsif, konten edukasi.`,
+                segments: `Profesional urban 25-40 tahun, middle income, melek digital, value quality.`,
+                resources: `Tim inti terlatih, brand & reputasi, sistem operasional, data pelanggan.`,
+                channels: `Outlet fisik, marketplace, sosmed, aplikasi ojol, website.`,
+                costs: `Bahan baku, gaji tim, sewa, marketing, teknologi.`,
+                revenue: `Penjualan produk utama, produk pelengkap, layanan premium, membership.`
+            }),
+            swot: () => ({
+                strengths: `Tim berpengalaman, kualitas produk unggul, lokasi strategis, brand lokal kuat.`,
+                weaknesses: `Brand awareness rendah, modal terbatas, sistem belum sepenuhnya terdigitalisasi.`,
+                opportunities: `Tren pasar mendukung, regulasi pemerintah ramah UMKM, pertumbuhan segmen target.`,
+                threats: `Persaingan ketat, kenaikan biaya bahan baku, perubahan preferensi konsumen.`
+            }),
+            soar: () => ({
+                strengths: `Kualitas produk, tim solid, positioning jelas.`,
+                opportunities: `Tren pasar, celah kompetitor, dukungan ekosistem.`,
+                aspirations: `Menjadi pemain utama di niche ${industry} dalam 3 tahun, dengan 3 cabang dan 10.000 pelanggan loyal.`,
+                results: `KPI 3 tahun: revenue 5x lipat, NPS 8+, 30% margin bersih.`
+            }),
+            portofolio: () => ({
+                bcg: {
+                    star: `Produk flagship dengan pertumbuhan tinggi & pangsa pasar kuat.`,
+                    cashCow: `Produk mature yang menghasilkan cash flow stabil.`,
+                    question: `Produk baru dengan potensi tapi butuh investasi.`,
+                    dog: `Produk lama dengan pasar stagnan, kandidat divestasi.`
+                },
+                ansoff: {
+                    penetration: `Tingkatkan frekuensi pembelian & repeat order pelanggan existing.`,
+                    marketDev: `Ekspansi ke kota/wilayah baru dengan produk sama.`,
+                    productDev: `Kembangkan varian produk baru untuk pelanggan existing.`,
+                    diversification: `Masuk kategori baru dengan produk & pasar baru.`
+                },
+                kano: {
+                    mustBe: `Kualitas dasar produk, kebersihan, ketepatan waktu layanan.`,
+                    performance: `Kecepatan layanan, variasi produk, harga kompetitif.`,
+                    attractive: `Program loyalty eksklusif, personalisasi, komunitas member.`
+                }
+            }),
+            branding: () => ({
+                products: [
+                    { name: `Produk Flagship ${name}`, score: 9, reason: 'Margin tinggi, repeat order, diferensiasi jelas.' },
+                    { name: `Produk Pendukung Premium`, score: 8, reason: 'Pelengkap produk utama, margin baik.' },
+                    { name: `Layanan Eksklusif / Membership`, score: 7, reason: 'Loyalitas jangka panjang, recurring revenue.' }
+                ],
+                purpose: `Memberikan pengalaman ${industry} terbaik yang membuat hidup pelanggan lebih mudah, bermakna, dan menyenangkan.`,
+                personality: `Hangat, tepercaya, modern, sedikit playful`,
+                voice: `Santai tapi informatif, ramah, tidak menggurui`,
+                tagline: `Sentuhan Terbaik untuk Hari Anda`,
+                colors: ['#2563eb', '#10b981', '#0f172a', '#f59e0b', '#f8fafc'],
+                font: 'Plus Jakarta Sans',
+                logo: `Konsep: simbol sederhana & ikonik, mudah diingat, scalable dari favicon hingga billboard.`
+            }),
+            financial: () => ({
+                cac: 'Rp 20.000', ltv: 'Rp 400.000', margin: '40%', bep: '350 unit/bulan',
+                assumptions: `Asumsi kritis: (1) CAC stabil di bawah Rp25.000, (2) Retensi minimal 6 bulan, (3) Harga bahan tidak naik >10%, (4) Traffic minimum 25 transaksi/hari.`
+            }),
+            execution: () => ({
+                roadmap: [
+                    { title: 'Riset pasar & validasi masalah', quarter: 1 },
+                    { title: 'Bangun MVP & uji coba terbatas', quarter: 1 },
+                    { title: 'Soft launching & kumpulkan feedback', quarter: 2 },
+                    { title: 'Grand launching & marketing agresif', quarter: 2 },
+                    { title: 'Optimasi produk & operasional', quarter: 3 },
+                    { title: 'Scale up & ekspansi kanal', quarter: 4 }
+                ],
+                kpi: {
+                    phase1: 'Validasi 30 pelanggan, MVP siap, 3 iterasi',
+                    phase2: '100 pelanggan pertama, revenue awal, NPS 7+',
+                    phase3: '500 pelanggan, CAC < Rp25k, LTV/CAC > 3',
+                    phase4: '1000+ pelanggan, profitabilitas, siap scale'
+                },
+                checklist: [
+                    { label: 'Wawancara 20 calon pelanggan (Mom Test)', done: false },
+                    { label: 'Riset kompetitor & celah pasar', done: false },
+                    { label: 'Bangun MVP dengan fitur minimum', done: false },
+                    { label: 'Setup channel marketing (sosmed, marketplace)', done: false },
+                    { label: 'Launch & kumpulkan feedback pertama', done: false }
+                ]
+            })
+        };
+        if (generators[type]) return generators[type]();
+        return {};
+    },
+
+    generateSummary(formData) {
+        const name = formData.profile.businessName || 'Bisnis Anda';
+        const industry = formData.profile.industry || 'industri Anda';
+        const type = formData.profile.userType === 'new' ? 'bisnis baru' : 'bisnis berjalan';
+        const stage = formData.profile.userType === 'new' ? 'tahap validasi ide dan pembangunan fondasi' : 'tahap scale-up dan optimalisasi profitabilitas';
+        return `${name} adalah ${type} di sektor ${industry} yang saat ini berada di ${stage}.
+
+Berdasarkan analisis lengkap 5 fase BizMentor AI:
+
+▸ DIAGNOSIS: Pasar menunjukkan peluang yang solid dengan ${formData.diagnosis.competitorGap ? 'celah kompetitif yang jelas' : 'kebutuhan validasi pasar lebih lanjut'}. Faktor eksternal (PESTEL) mendukung pertumbuhan.
+
+▸ STRATEGI: Positioning berfokus pada segmen middle market yang mencari kualitas dengan harga terjangkau. Value proposition: ${formData.strategy.bmc.value || 'perlu dipertajam'}.
+
+▸ BRANDING: Tagline "${formData.branding.tagline || 'akan ditentukan'}" dengan personality ${formData.branding.personality || 'yang konsisten'}.
+
+▸ FINANSIAL: CAC ${formData.financial.cac || '-'}, LTV ${formData.financial.ltv || '-'}, margin ${formData.financial.margin || '-'}, BEP ${formData.financial.bep || '-'}.
+
+▸ EKSEKUSI: Roadmap 12 bulan dengan ${formData.execution.roadmap.length} milestone utama dari validasi hingga scale-up.
+
+REKOMENDASI PRIORITAS:
+1. Fokus validasi 3-6 bulan pertama sebelum ekspansi besar.
+2. Bangun fondasi brand & sistem operasional yang scalable.
+3. Pantau metrik kunci: CAC, LTV, retention rate, NPS.
+4. Review strategi setiap kuartal berdasarkan data real.`;
+    }
+};
+</script>
+
+</body>
+</html>
+<!-- ═══════════════════════════════════════════ -->
+<!-- LANJUTAN DI BAGIAN 2 — JANGAN TUTUP TAG DI SINI -->
+<!-- ═══════════════════════════════════════════ -->
